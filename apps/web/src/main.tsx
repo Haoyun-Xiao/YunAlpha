@@ -1,4 +1,4 @@
-import {appPath, publicShowcase} from './deployment';
+import {appPath, newsUrl, publicShowcase} from './deployment';
 import {StrictMode, useEffect, useRef, useState, type MouseEvent, type ReactNode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {CatalogView, ReportsView, type DirectoryOptions} from './CatalogView';
@@ -10,6 +10,7 @@ import './styles.css';
 
 const navigation = [
   {id: 'research', label: '投研台', icon: 'research'},
+  {id: 'news', label: '舆情', icon: 'news'},
   {id: 'strategies', label: '策略', icon: 'strategies'},
   {id: 'watchlist', label: '自选', icon: 'watchlist', planned: true},
   {id: 'signals', label: '信号', icon: 'signals', planned: true},
@@ -33,6 +34,7 @@ const iconPaths = {
   plus: 'M12 5v14M5 12h14',
   research: 'M3 4h7v7H3zM14 4h7v4h-7zM3 15h7v5H3zM14 12h7v8h-7z',
   strategies: 'M3 19h18M5 15l5-5 4 3 5-8M15 5h4v4',
+  news: 'M4 5h16v14H4zM7 9h5M7 12h5M7 15h10M15 9h2v3h-2z',
   watchlist: 'M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
   signals: 'M3 12h4l3-7 4 14 3-7h4',
   skills: 'M12 3v18M3 12h18M6 6l12 12M18 6L6 18',
@@ -56,6 +58,13 @@ function currentView(): View {
   const view = params.get('view');
   return views.find(item => item.id === view)?.id ??
     (view === null && params.has('task') ? 'environment' : 'research');
+}
+
+function NewsView() {
+  return <section className="news-view" aria-label="舆情">
+    <div className="news-toolbar"><span>舆情 · AIHOT</span><a href={newsUrl} target="_blank" rel="noreferrer">在新标签页打开 ↗</a></div>
+    <iframe src={newsUrl} title="AIHOT 舆情"/>
+  </section>;
 }
 
 function App() {
@@ -126,11 +135,10 @@ function App() {
         <div className="sidebar-scroll">
           <nav className="session-links" aria-label="会话与空间">
             {navLink('session', 'plus', publicShowcase ? '研究 Agent' : '新建会话')}
-            {!publicShowcase && navLink('space', 'space', '个人空间')}
           </nav>
           <nav className="primary-nav" aria-label="工作台导航">
             <p className="nav-heading">研究工作台</p>
-            {navigation.map(item => navLink(item.id, item.icon, item.label, 'planned' in item))}
+            {navigation.map(item => <div key={item.id}>{navLink(item.id, item.icon, item.label, 'planned' in item)}{item.id === 'news' && !publicShowcase && navLink('space', 'space', '个人空间')}</div>)}
           </nav>
           {!publicShowcase && <SessionHistory sessions={sessions} selected={selectedSession} navigate={navigate}/>}
         </div>
@@ -148,14 +156,15 @@ function App() {
           ? <nav aria-label="当前位置"><a href={appPath('/?view=research')} onClick={navigate}>投研台</a><span aria-hidden="true">/</span><span aria-current="page">{label}</span></nav>
           : <div><span>研究工作台</span><span aria-hidden="true">/</span><span>{label}</span></div>}
       </div>
-      <div className={`workspace-content ${view === 'session' ? 'is-agent-view' : ''}`} key={revision}>
-        {publicShowcase && ['session', 'skills', 'space', 'environment'].includes(view) ? <div className="page-heading">
+      <div className={`workspace-content ${view === 'session' ? 'is-agent-view' : ''} ${view === 'news' ? 'is-news-view' : ''}`} key={revision}>
+        {publicShowcase && ['session', 'space', 'environment'].includes(view) ? <div className="page-heading">
             <h1>研究 Agent</h1>
             <p>基金深度报告与产业链研究共用 Agent、工具调用和后台报告任务。公开版提供研究成果与实现源码。</p>
             <p><a className="entry-link" href={appPath('/?view=reports')} onClick={navigate}>查看基金深度报告</a></p>
             <p><a className="entry-link" href="https://github.com/Haoyun-Xiao/YunAlpha/tree/main/apps/fund_agent" target="_blank" rel="noreferrer">查看 Agent 与工作流源码 ↗</a></p>
           </div> : view === 'research' || view === 'strategies' ? <CatalogView kind={view} navigate={navigate}
           options={view === 'research' ? research : strategies} onChange={view === 'research' ? setResearch : setStrategies}/>
+          : view === 'news' ? <NewsView/>
           : view === 'reports' ? <ReportsView/>
           : view === 'environment' ? <EnvironmentView/>
           : view === 'skills' ? <SkillsView started={(id, prompt) => { sessions.refresh(); openSession(id, prompt); }}/>
