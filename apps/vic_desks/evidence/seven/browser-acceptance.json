@@ -1,0 +1,59 @@
+{
+  "version": "d451f099a954d584",
+  "entry": "/workspaces/vic-desks/?board=national_team",
+  "checks": {
+    "national_team": {
+      "selection": "scope=narrow",
+      "selection_changed_results": true,
+      "drilldown": "601939.SH",
+      "charts": 3,
+      "sections": 5
+    },
+    "contrarian": {
+      "selection": "候选榜 board=low_pb",
+      "drilldown": "002772.SZ",
+      "charts": 2,
+      "sections": 14
+    },
+    "sentiment": {
+      "selection": "维度分解 → 沪深300 PB",
+      "drilldown": "item=A2",
+      "charts": 3,
+      "sections": 5
+    },
+    "chips": {
+      "selection": "筹码筛选 q=600519",
+      "drilldown": "600519.SH",
+      "charts": 3,
+      "sections": 6
+    },
+    "valuation": {
+      "selection": "估值矩阵沪深300 → metric=pb",
+      "drilldown": "000300.SH",
+      "charts": 2,
+      "sections": 6
+    },
+    "fund_holdings": {
+      "selection": "公司排行 q=华夏",
+      "drilldown": "华夏基金管理有限公司",
+      "charts": 4,
+      "sections": 17
+    },
+    "capital_flow": {
+      "selection": "win=5 个股热图",
+      "drilldown": "code=300308.SZ",
+      "charts": 7,
+      "sections": 9
+    }
+  },
+  "console_errors": 0,
+  "console_warnings": 0,
+  "assets": [
+    "/workspaces/vic-desks/style.css",
+    "/workspaces/vic-desks/app.js"
+  ],
+  "notes": [
+    "浏览器通过前缀入口实测；没有访问旧服务",
+    "资金表点选先保持在表内；使用证券下钻控件后展开资金与价格详情"
+  ]
+}

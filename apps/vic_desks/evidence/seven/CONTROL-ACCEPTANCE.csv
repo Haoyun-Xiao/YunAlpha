@@ -1,0 +1,92 @@
+﻿check,status,scope,evidence,tested_version
+"national_team/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/etf default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/portfolio default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/holdings default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/changes default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/entity default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/stock default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/temperature default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/industries default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/candidates default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/traps default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/signals default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/dimensions default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/indicators default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/events default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/replay default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/industries default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/screen default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/stock default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/index default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/returns default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/structure default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/ranking default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/corp default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/stock default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/industries default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/heat default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/compare default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/overview default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/main default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/boards default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/stocks default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/margin default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/cross default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/etf default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/toplist default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/corporate default {'width': 1470, 'height': 656}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/etf default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/portfolio default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/holdings default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/changes default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/entity default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"national_team/stock default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/temperature default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/industries default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/candidates default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/traps default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"contrarian/signals default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/dimensions default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/indicators default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/events default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"sentiment/replay default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/industries default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/screen default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"chips/stock default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/index default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/returns default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"valuation/structure default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/ranking default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/corp default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/stock default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/industries default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/heat default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"fund_holdings/compare default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/overview default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/main default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/boards default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/stocks default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/margin default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/cross default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/etf default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/toplist default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+"capital_flow/corporate default {'width': 1920, 'height': 1080}",pass,"default page render, not every control",revision-qa/results.json,f0359a48d9f6c436
+fund_basket,pass,"{""ok"": true, ""names"": [""易方达基金管理有限公司 详情 加入比较"", ""华夏基金管理有限公司 详情 加入比较""], ""url"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=fund_holdings&tab=compare&ids=%E6%98%93%E6%96%B9%E8%BE%BE%E5%9F%BA%E9%87%91%E7%AE%A1%E7%90%86%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8%2C%E5%8D%8E%E5%A4%8F%E5%9F%BA%E9%87%91%E7%AE%A1%E7%90%86%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8"", ""tips"": [""公司B：易方达基金管理有限公司\n公司A：华夏基金管理有限公司\n权重重叠：0.63"", ""公司B：华夏基金管理有限公司\n公司A：易方达基金管理有限公司\nJaccard：0.8""], ""points"": [[275.75, 531], [559.25, 586]]}",revision-qa/final-interactions.json,f0359a48d9f6c436
+national_stock,pass,"{""ok"": true, ""first"": ""601939.SH\t建设银行\t银行\t145,543,787,067\t58.21\t16,097.14 亿\t3\tzj,hj_am,hj_inv\t0\t0\t0\t0\t9.76%"", ""url"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=national_team&tab=stock&code=601939.SH"", ""panels"": [{""id"": ""stock_list"", ""rect"": [29, 236, 587.75, 1440.5]}, {""id"": ""stock_structure"", ""rect"": [617.75, 236, 823.25, 328]}, {""id"": ""top_holders"", ""rect"": [617.75, 565, 823.25, 501.5]}, {""id"": ""stock_history"", ""rect"": [617.75, 1067.5, 823.25, 303.5]}, {""id"": ""price"", ""rect"": [617.75, 1372, 823.25, 303.5]}]}",revision-qa/final-interactions.json,f0359a48d9f6c436
+capital_100,pass,"{""ok"": true, ""before"": ""60"", ""after"": ""100"", ""chart"": 100, ""url"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=capital_flow&tab=main&history=100""}",revision-qa/final-interactions.json,f0359a48d9f6c436
+capital_tree,pass,"{""ok"": true, ""groups"": [{""name"": ""通信"", ""children"": 29}, {""name"": ""电力设备"", ""children"": 55}, {""name"": ""电子"", ""children"": 123}, {""name"": ""机械设备"", ""children"": 45}, {""name"": ""传媒"", ""children"": 35}, {""name"": ""医药生物"", ""children"": 22}, {""name"": ""有色金属"", ""children"": 28}, {""name"": ""国防军工"", ""children"": 16}, {""name"": ""食品饮料"", ""children"": 8}, {""name"": ""建筑材料"", ""children"": 8}, {""name"": ""基础化工"", ""children"": 13}, {""name"": ""农林牧渔"", ""children"": 10}, {""name"": ""银行"", ""children"": 14}, {""name"": ""纺织服饰"", ""children"": 3}, {""name"": ""公用事业"", ""children"": 6}, {""name"": ""汽车"", ""children"": 19}, {""name"": ""计算机"", ""children"": 25}, {""name"": ""家用电器"", ""children"": 9}, {""name"": ""非银金融"", ""children"": 5}, {""name"": ""石油石化"", ""children"": 4}, {""name"": ""煤炭"", ""children"": 4}, {""name"": ""交通运输"", ""children"": 3}, {""name"": ""建筑装饰"", ""children"": 5}, {""name"": ""商贸零售"", ""children"": 5}, {""name"": ""未分类"", ""children"": 2}, {""name"": ""美容护理"", ""children"": 1}, {""name"": ""综合"", ""children"": 1}, {""name"": ""环保"", ""children"": 1}, {""name"": ""房地产"", ""children"": 1}], ""click"": {""symbol"": ""300308.SZ"", ""detail_title"": ""所选个股60日资金"", ""verified_by"": ""browser click in 通信 leaf""}}",revision-qa/final-interactions.json,f0359a48d9f6c436
+contrarian_industry,pass,"{""ok"": true, ""clickableRows"": 81, ""name"": ""美容护理\t1.75\t3.21\t0.28\t85.99\t-2.43%\t10.45%\t改善\t-0.05%\t2026-06-30T00:00:00\t-8.41%\t18\t24"", ""before"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=contrarian&tab=industries"", ""after"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=contrarian&tab=industries&page=1&industry=%E7%BE%8E%E5%AE%B9%E6%8A%A4%E7%90%86""}",revision-qa/final-interactions.json,f0359a48d9f6c436
+chips,pass,"{""ok"": true, ""before"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=chips&tab=stock&code=600519.SH&date=2026-11-06&obs=2026-11-06"", ""info"": {""date"": ""2026-06-10"", ""point"": [600.202380952381, 555.1356], ""series"": [""价格"", ""平均成本"", ""成本5%"", ""成本15%"", ""成本50%"", ""成本85%"", ""成本95%"", ""cost_5pct 底"", ""cost_95pct 带"", ""cost_15pct 底"", ""cost_85pct 带""]}, ""clicked"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=chips&tab=stock&code=600519.SH&date=2026-11-06&obs=2026-06-10"", ""left"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=chips&tab=stock&code=600519.SH&date=2026-11-06&obs=2026-06-09"", ""right"": ""http://127.0.0.1:8889/?data_version=f0359a48d9f6c436&desk=chips&tab=stock&code=600519.SH&date=2026-11-06&obs=2026-06-10""}",revision-qa/chips-final.json,f0359a48d9f6c436
+published north total turnover label and missing reason,pass,Actual IAB observation; no post-disclosure net buy fabricated,revision-qa/published-capital.jpg,d451f099a954d584

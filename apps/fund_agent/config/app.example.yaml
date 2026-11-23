@@ -1,0 +1,11 @@
+app:
+  host: 127.0.0.1
+  port: 19241
+  timezone: Asia/Shanghai
+  user_id: local
+  base_path: /agent-runtime
+web:
+  mode: auto
+research:
+  read_only: true
+  trading_tools_enabled: false

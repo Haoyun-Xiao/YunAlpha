@@ -1,0 +1,57 @@
+{
+  "source_version": "d451f099a954d584",
+  "source_manifest_sha256": "a70a3eadeb2adf177bdcf6489bce791c2301248a1e06de3b9a9977e97bad1f38",
+  "unchanged_calculation_adapters": [
+    "contrarian (only trailing whitespace normalized)",
+    "market (all function ASTs; only fallback input path adapted)"
+  ],
+  "owners_ast_unchanged": [
+    "_capital",
+    "_clean",
+    "_company",
+    "_company_performance",
+    "_consensus",
+    "_controls",
+    "_empty",
+    "_etf",
+    "_filters",
+    "_finalize_sections",
+    "_float",
+    "_fund",
+    "_group_line",
+    "_ids",
+    "_int",
+    "_multi",
+    "_national",
+    "_number",
+    "_page",
+    "_panel_impl",
+    "_params_action",
+    "_period",
+    "_price",
+    "_quarter_sections",
+    "_read_meta",
+    "_scoped_controls",
+    "_section",
+    "_select",
+    "_symbol",
+    "_text",
+    "metadata",
+    "panel"
+  ],
+  "owners_changed": {
+    "_meta": "未传 Store 时使用同版冻结数据，不访问旧预览目录",
+    "_Data.__init__": "只改输入目录选择与 DuckDB 临时目录；注册 SQL 与其他查询方法保持"
+  },
+  "runtime_boundary": "仅 settings/store/server 及 owners 目录连接适配；业务计算、固定日期与版本保持",
+  "runtime_hashes": {
+    "seven_desks/__init__.py": "6e25ca2121df37b3067c1d34fba72afe91b5a9a3db9b9c1b9c586cfe9b72a69b",
+    "seven_desks/settings.py": "5ef2a224a4d1b2c7700dda9268fb892b55603b0bbf9c7138bd23b3b1283b116b",
+    "seven_desks/store.py": "c8b4ff609b8ba8d8ca3e24fca2e2159117af2c9004a20f8d627b4307fb293220",
+    "seven_desks/server.py": "e24e0a380ba3240f07af579c11050b59938a47491af5d1742fa3c6878df41f7c",
+    "seven_desks/adapters/__init__.py": "f467a521292b99ee8c359af3b442b92bf9bfe0f82ccf77e27e6faf240954f037",
+    "seven_desks/adapters/contrarian.py": "4f13212233c690d5b7a9d0cafee6546e42beccc18041aef2e1210e5bf228c0d7",
+    "seven_desks/adapters/market.py": "c88b570adee3d764cb1bd88d9935f24ea947b710321921f26f87ccb27c82261b",
+    "seven_desks/adapters/owners.py": "da0527422749bfbac3cf10777c4f14f64bf128434dce83c48a954eb833dcb12f"
+  }
+}

@@ -1,0 +1,797 @@
+{
+  "frozen_import": {
+    "version": "d451f099a954d584",
+    "files": 787,
+    "data_files": 731,
+    "bytes": 20830918949,
+    "copy_commands": {
+      "cp-c": 787
+    },
+    "sha256sums_sha256": "3a859664449dd1a2c3540f200d69e7768978fb588cc917cd849b3f5809d388c6"
+  },
+  "default_pages": {
+    "version": "d451f099a954d584",
+    "tabs": 42,
+    "errors": [],
+    "warm_api_p95_ms": 17.47295819222927,
+    "results": [
+      {
+        "board": "national_team",
+        "tab": "overview",
+        "label": "全景总览",
+        "section_count": 11,
+        "data_sections": 11,
+        "empty_sections": [],
+        "first_ms": 1.4780829660594463,
+        "warm_ms": 1.610291888937354,
+        "rows": 441
+      },
+      {
+        "board": "national_team",
+        "tab": "etf",
+        "label": "ETF",
+        "section_count": 11,
+        "data_sections": 10,
+        "empty_sections": [
+          {
+            "id": "institution_holdings",
+            "title": "ETF机构持有份额及比例",
+            "reason": "正式持有人结构未覆盖当前宽基ETF池，不把普通基金结构或机构比例视为国家队持有。"
+          }
+        ],
+        "first_ms": 5.476124817505479,
+        "warm_ms": 5.044833989813924,
+        "rows": 1919
+      },
+      {
+        "board": "national_team",
+        "tab": "portfolio",
+        "label": "组合",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 1.9419160671532154,
+        "warm_ms": 1.7016660422086716,
+        "rows": 548
+      },
+      {
+        "board": "national_team",
+        "tab": "holdings",
+        "label": "持仓",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 2.0269581582397223,
+        "warm_ms": 1.8195000011473894,
+        "rows": 259
+      },
+      {
+        "board": "national_team",
+        "tab": "changes",
+        "label": "调仓",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 1.9731251522898674,
+        "warm_ms": 1.7470831517130136,
+        "rows": 285
+      },
+      {
+        "board": "national_team",
+        "tab": "entity",
+        "label": "主体",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 1.4403339009732008,
+        "warm_ms": 1.3244159054011106,
+        "rows": 124
+      },
+      {
+        "board": "national_team",
+        "tab": "stock",
+        "label": "个股",
+        "section_count": 2,
+        "data_sections": 1,
+        "empty_sections": [
+          {
+            "id": "stock_detail",
+            "title": "个股下钻",
+            "reason": "从持仓明细选择证券，或输入六位股票代码。"
+          }
+        ],
+        "first_ms": 1.3175420463085175,
+        "warm_ms": 1.1543750297278166,
+        "rows": 50
+      },
+      {
+        "board": "contrarian",
+        "tab": "overview",
+        "label": "逆向总览",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 3.7142501678317785,
+        "warm_ms": 3.4189580474048853,
+        "rows": 323
+      },
+      {
+        "board": "contrarian",
+        "tab": "temperature",
+        "label": "市场温度",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 3.2886669505387545,
+        "warm_ms": 3.071832936257124,
+        "rows": 554
+      },
+      {
+        "board": "contrarian",
+        "tab": "industries",
+        "label": "行业逆向",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 5.445040995255113,
+        "warm_ms": 5.136416992172599,
+        "rows": 482
+      },
+      {
+        "board": "contrarian",
+        "tab": "candidates",
+        "label": "候选榜",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 3.6764161195605993,
+        "warm_ms": 3.45054198987782,
+        "rows": 236
+      },
+      {
+        "board": "contrarian",
+        "tab": "traps",
+        "label": "陷阱排雷",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 4.935208009555936,
+        "warm_ms": 4.88212495110929,
+        "rows": 126
+      },
+      {
+        "board": "contrarian",
+        "tab": "signals",
+        "label": "拐点信号",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 1.3978329952806234,
+        "warm_ms": 1.2188330292701721,
+        "rows": 82
+      },
+      {
+        "board": "sentiment",
+        "tab": "overview",
+        "label": "温度总览",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 18.22637510485947,
+        "warm_ms": 18.225375097244978,
+        "rows": 805
+      },
+      {
+        "board": "sentiment",
+        "tab": "dimensions",
+        "label": "维度分解",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 32.38316695205867,
+        "warm_ms": 33.503707963973284,
+        "rows": 1589
+      },
+      {
+        "board": "sentiment",
+        "tab": "indicators",
+        "label": "指标明细",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 11.381542077288032,
+        "warm_ms": 8.941833162680268,
+        "rows": 2296
+      },
+      {
+        "board": "sentiment",
+        "tab": "events",
+        "label": "信号事件",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 1.9342910964041948,
+        "warm_ms": 1.6568750143051147,
+        "rows": 350
+      },
+      {
+        "board": "sentiment",
+        "tab": "replay",
+        "label": "历史复盘",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 17.662208061665297,
+        "warm_ms": 17.47295819222927,
+        "rows": 811
+      },
+      {
+        "board": "chips",
+        "tab": "overview",
+        "label": "总览",
+        "section_count": 7,
+        "data_sections": 7,
+        "empty_sections": [],
+        "first_ms": 1.506374916061759,
+        "warm_ms": 1.304500037804246,
+        "rows": 551
+      },
+      {
+        "board": "chips",
+        "tab": "industries",
+        "label": "行业筹码",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 3.4441249445080757,
+        "warm_ms": 3.186665941029787,
+        "rows": 2004
+      },
+      {
+        "board": "chips",
+        "tab": "screen",
+        "label": "筹码筛选",
+        "section_count": 5,
+        "data_sections": 4,
+        "empty_sections": [
+          {
+            "id": "backtest-events",
+            "title": "单股逐事件回测端点 · 后复权价格",
+            "reason": "输入完整股票代码查看其信号回测端点；未成熟或缺交易日价格保留空值。"
+          }
+        ],
+        "first_ms": 2.4640830233693123,
+        "warm_ms": 2.2502089850604534,
+        "rows": 326
+      },
+      {
+        "board": "chips",
+        "tab": "stock",
+        "label": "个股筹码",
+        "section_count": 1,
+        "data_sections": 0,
+        "empty_sections": [
+          {
+            "id": "stock",
+            "title": "请选择股票",
+            "reason": "输入完整证券代码，例如600519.SH，再进入个股筹码。"
+          }
+        ],
+        "first_ms": 1.1110000777989626,
+        "warm_ms": 0.9314590133726597,
+        "rows": 0
+      },
+      {
+        "board": "valuation",
+        "tab": "overview",
+        "label": "估值总览",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 3.6522499285638332,
+        "warm_ms": 3.5420421045273542,
+        "rows": 816
+      },
+      {
+        "board": "valuation",
+        "tab": "index",
+        "label": "指数详情",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 74.6980409603566,
+        "warm_ms": 70.37708396092057,
+        "rows": 5059
+      },
+      {
+        "board": "valuation",
+        "tab": "returns",
+        "label": "估值与收益",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 3.477916121482849,
+        "warm_ms": 1.092416001483798,
+        "rows": 37
+      },
+      {
+        "board": "valuation",
+        "tab": "structure",
+        "label": "结构与对照",
+        "section_count": 6,
+        "data_sections": 5,
+        "empty_sections": [
+          {
+            "id": "cross-market",
+            "title": "跨市场估值对照",
+            "reason": "该受控估值包未提供美股板块PE；全球资产价格不能替代PE。原站港股亦暂无估值，未伪造跨市场对照。"
+          }
+        ],
+        "first_ms": 4.1474581230431795,
+        "warm_ms": 3.621875075623393,
+        "rows": 1552
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "overview",
+        "label": "总览",
+        "section_count": 12,
+        "data_sections": 10,
+        "empty_sections": [
+          {
+            "id": "consensus_buy",
+            "title": "共识买入",
+            "reason": "跨期可比基金样本覆盖不足80%，未认定买卖；没有达到至少3家公司且方向数量至少为反向3倍的信号。"
+          },
+          {
+            "id": "consensus_sell",
+            "title": "共识卖出",
+            "reason": "跨期可比基金样本覆盖不足80%，未认定买卖；没有达到至少3家公司且方向数量至少为反向3倍的信号。"
+          }
+        ],
+        "first_ms": 3.3962090965360403,
+        "warm_ms": 3.1355421524494886,
+        "rows": 914
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "ranking",
+        "label": "公司排行",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 2.316292142495513,
+        "warm_ms": 2.0833329763263464,
+        "rows": 387
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "corp",
+        "label": "公司详情",
+        "section_count": 2,
+        "data_sections": 1,
+        "empty_sections": [
+          {
+            "id": "choose_company",
+            "title": "公司详情",
+            "reason": "选择公司排行中的公司，或输入能够唯一匹配的公司名称前缀。"
+          }
+        ],
+        "first_ms": 1.2318750377744436,
+        "warm_ms": 1.0617498774081469,
+        "rows": 1
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "stock",
+        "label": "个股透视",
+        "section_count": 2,
+        "data_sections": 1,
+        "empty_sections": [
+          {
+            "id": "choose_stock",
+            "title": "个股详情",
+            "reason": "输入六位股票代码，或在持仓表点击证券。"
+          }
+        ],
+        "first_ms": 1.166459172964096,
+        "warm_ms": 1.0184580460190773,
+        "rows": 1
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "industries",
+        "label": "行业动向",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 16.039750073105097,
+        "warm_ms": 15.616916818544269,
+        "rows": 3802
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "heat",
+        "label": "持股热力",
+        "section_count": 8,
+        "data_sections": 6,
+        "empty_sections": [
+          {
+            "id": "consensus_buy",
+            "title": "共识买入",
+            "reason": "跨期可比基金样本覆盖不足80%，未认定买卖；没有达到至少3家公司且方向数量至少为反向3倍的信号。"
+          },
+          {
+            "id": "consensus_sell",
+            "title": "共识卖出",
+            "reason": "跨期可比基金样本覆盖不足80%，未认定买卖；没有达到至少3家公司且方向数量至少为反向3倍的信号。"
+          }
+        ],
+        "first_ms": 2.3461671080440283,
+        "warm_ms": 2.0039170049130917,
+        "rows": 353
+      },
+      {
+        "board": "fund_holdings",
+        "tab": "compare",
+        "label": "公司比较",
+        "section_count": 2,
+        "data_sections": 1,
+        "empty_sections": [
+          {
+            "id": "comparison_basket",
+            "title": "公司比较篮",
+            "reason": "至少选择2家、最多6家公司；可在排行点击公司加入，也可输入逗号分隔名称（兼容原站178/94）。"
+          }
+        ],
+        "first_ms": 1.3105000834912062,
+        "warm_ms": 1.1952919885516167,
+        "rows": 1
+      },
+      {
+        "board": "capital_flow",
+        "tab": "overview",
+        "label": "总览",
+        "section_count": 15,
+        "data_sections": 13,
+        "empty_sections": [
+          {
+            "id": "north_current",
+            "title": "近期北向全市场成交",
+            "reason": "北向总量正式表止于2024-08-16，近期十大成交不等于全市场成交；不能补零。"
+          },
+          {
+            "id": "repurchase_plan",
+            "title": "90日回购预案金额上限",
+            "reason": "当前正式表amount没有经验证的预案上限契约；产业资本页提供源披露金额，未冒充预案上限。"
+          }
+        ],
+        "first_ms": 1.4229591470211744,
+        "warm_ms": 1.3221250846982002,
+        "rows": 267
+      },
+      {
+        "board": "capital_flow",
+        "tab": "main",
+        "label": "主力动向",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 2.302624983713031,
+        "warm_ms": 2.1120409946888685,
+        "rows": 232
+      },
+      {
+        "board": "capital_flow",
+        "tab": "boards",
+        "label": "板块跟踪",
+        "section_count": 4,
+        "data_sections": 4,
+        "empty_sections": [],
+        "first_ms": 7.228167029097676,
+        "warm_ms": 7.373249856755137,
+        "rows": 759
+      },
+      {
+        "board": "capital_flow",
+        "tab": "stocks",
+        "label": "个股热图",
+        "section_count": 2,
+        "data_sections": 2,
+        "empty_sections": [],
+        "first_ms": 3.260999917984009,
+        "warm_ms": 2.978874836117029,
+        "rows": 550
+      },
+      {
+        "board": "capital_flow",
+        "tab": "margin",
+        "label": "两融杠杆",
+        "section_count": 8,
+        "data_sections": 8,
+        "empty_sections": [],
+        "first_ms": 7.088958052918315,
+        "warm_ms": 7.116124965250492,
+        "rows": 1702
+      },
+      {
+        "board": "capital_flow",
+        "tab": "cross",
+        "label": "跨境资金",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 2.1029580384492874,
+        "warm_ms": 1.9839589949697256,
+        "rows": 1040
+      },
+      {
+        "board": "capital_flow",
+        "tab": "etf",
+        "label": "ETF资金",
+        "section_count": 6,
+        "data_sections": 6,
+        "empty_sections": [],
+        "first_ms": 4.019542131572962,
+        "warm_ms": 4.150541964918375,
+        "rows": 1041
+      },
+      {
+        "board": "capital_flow",
+        "tab": "toplist",
+        "label": "龙虎榜",
+        "section_count": 5,
+        "data_sections": 5,
+        "empty_sections": [],
+        "first_ms": 1.5137919690459967,
+        "warm_ms": 1.3710830826312304,
+        "rows": 141
+      },
+      {
+        "board": "capital_flow",
+        "tab": "corporate",
+        "label": "产业资本",
+        "section_count": 2,
+        "data_sections": 2,
+        "empty_sections": [],
+        "first_ms": 1.3484170194715261,
+        "warm_ms": 1.2868340127170086,
+        "rows": 51
+      },
+      {
+        "board": "chips",
+        "entity": "600519.SH",
+        "first_ms": 8.421042002737522,
+        "data_sections": 6
+      },
+      {
+        "board": "national_team",
+        "entity": "601988.SH",
+        "first_ms": 2.323040971532464,
+        "data_sections": 5
+      },
+      {
+        "board": "fund_holdings",
+        "entity": "华夏基金管理有限公司",
+        "first_ms": 2.726542064920068,
+        "data_sections": 13
+      },
+      {
+        "board": "capital_flow",
+        "entity": "300308.SZ",
+        "first_ms": 5.2961669862270355,
+        "data_sections": 9
+      },
+      {
+        "board": "contrarian",
+        "entity": "600519.SH",
+        "first_ms": 3.392874961718917,
+        "data_sections": 13
+      }
+    ]
+  },
+  "nondefault_queries": {
+    "version": "d451f099a954d584",
+    "nondefault_queries": 7,
+    "all_computed_from_frozen_data": true,
+    "queries": [
+      {
+        "board": "national_team",
+        "panel": "overview",
+        "params": {
+          "scope": "narrow",
+          "period": "2026-06-30"
+        },
+        "sections": 11,
+        "rows": 396,
+        "missing_sections": [],
+        "source_page_cached": false,
+        "query_ms": 1216.59,
+        "runtime_cache": "versions/d451f099a954d584/pages/841d904a011d80d5e39370f7258db5c5f6ba7e3f92fa7baec24b4283f061e287.json"
+      },
+      {
+        "board": "contrarian",
+        "panel": "candidates",
+        "params": {
+          "board": "low_pb",
+          "red": "1",
+          "page_size": "20",
+          "order": "asc"
+        },
+        "sections": 4,
+        "rows": 206,
+        "missing_sections": [],
+        "source_page_cached": false,
+        "query_ms": 502.7,
+        "runtime_cache": "versions/d451f099a954d584/pages/b9ab9c4807ea1ff5975c26c2fb91321262d505c47e594994b885406e0fcdb5a2.json"
+      },
+      {
+        "board": "sentiment",
+        "panel": "overview",
+        "params": {
+          "w_valuation": "1.7",
+          "date": "2026-11-06"
+        },
+        "sections": 6,
+        "rows": 805,
+        "missing_sections": [],
+        "source_page_cached": false,
+        "query_ms": 179.53,
+        "runtime_cache": "versions/d451f099a954d584/pages/09bde698001ba54c586934f97f4622cd6ad6b097a9d3d882e9574c643465657c.json"
+      },
+      {
+        "board": "chips",
+        "panel": "screen",
+        "params": {
+          "wr_min": "20",
+          "wr_max": "40",
+          "c90_max": "15",
+          "page_size": "20"
+        },
+        "sections": 5,
+        "rows": 296,
+        "missing_sections": [
+          {
+            "id": "backtest-events",
+            "reason": "输入完整股票代码查看其信号回测端点；未成熟或缺交易日价格保留空值。"
+          }
+        ],
+        "source_page_cached": false,
+        "query_ms": 893.73,
+        "runtime_cache": "versions/d451f099a954d584/pages/b3cd2dadac43d195707d2c4ad972e4de578a1bae2db73f35b1109ac7fc4a6b6f.json"
+      },
+      {
+        "board": "valuation",
+        "panel": "index",
+        "params": {
+          "code": "000300.SH",
+          "metric": "pb",
+          "win": "5",
+          "range": "3y"
+        },
+        "sections": 6,
+        "rows": 1531,
+        "missing_sections": [],
+        "source_page_cached": false,
+        "query_ms": 330.32,
+        "runtime_cache": "versions/d451f099a954d584/pages/fd670d839e1e98eb1834b951ea7c0be990c05094a7cf0f1fd85b95dec408a1dc.json"
+      },
+      {
+        "board": "fund_holdings",
+        "panel": "corp",
+        "params": {
+          "corp": "华夏基金管理有限公司",
+          "period": "2026-06-30",
+          "date": "2026-11-06"
+        },
+        "sections": 17,
+        "rows": 1161,
+        "missing_sections": [
+          {
+            "id": "corp_disclosed_buy",
+            "reason": "当前筛选无可用记录；未将缺失数据填为0。"
+          },
+          {
+            "id": "corp_disclosed_sell",
+            "reason": "当前筛选无可用记录；未将缺失数据填为0。"
+          },
+          {
+            "id": "quarter_top10_DESC",
+            "reason": "没有通过可比基金覆盖≥80%、基金份额至少5份的季报前十样本；未放宽门槛认定增减持。"
+          },
+          {
+            "id": "quarter_top10_ASC",
+            "reason": "没有通过可比基金覆盖≥80%、基金份额至少5份的季报前十样本；未放宽门槛认定增减持。"
+          }
+        ],
+        "source_page_cached": false,
+        "query_ms": 315.24,
+        "runtime_cache": "versions/d451f099a954d584/pages/921b5ff24ce8566ef43cb722177b3b024e0fa614c39e6a4b0b2b3c23c6bf337e.json"
+      },
+      {
+        "board": "capital_flow",
+        "panel": "stocks",
+        "params": {
+          "win": "100",
+          "code": "300308.SZ",
+          "date": "2026-11-06",
+          "page_size": "20"
+        },
+        "sections": 9,
+        "rows": 1060,
+        "missing_sections": [],
+        "source_page_cached": false,
+        "query_ms": 1235.44,
+        "runtime_cache": "versions/d451f099a954d584/pages/9a98d7efeb34e393ce557914d5ff0846fe141898ec69ec46d6c72b012e84cc0b.json"
+      }
+    ]
+  },
+  "tests": {
+    "unique_tests_passed": 89,
+    "initial": "82 passed, 6 failed (missing pytz)",
+    "dependency_retest": "6 passed after locking pytz==2026.6",
+    "final_migration_boundary": "5 passed; includes 4 previously counted tests and 1 new candidate clone test",
+    "skips": 0
+  },
+  "crowding_regression": {
+    "version": "a8bbbe0793ac426c",
+    "stock_sample": [
+      "000001.SZ",
+      "300308.SZ",
+      "300502.SZ",
+      "603061.SH",
+      "300483.SZ",
+      "688796.SH",
+      "301362.SZ",
+      "688785.SH",
+      "600105.SH",
+      "301511.SZ",
+      "300570.SZ",
+      "000006.SZ",
+      "000007.SZ",
+      "301013.SZ",
+      "603186.SH",
+      "301526.SZ",
+      "600601.SH",
+      "600328.SH",
+      "002813.SZ",
+      "600479.SH"
+    ],
+    "page_p95_ms": 31.763,
+    "detail_first_key_p95_ms": 2.428,
+    "detail_warm_p95_ms": 1.79,
+    "first_process_detail_ms": 56.25,
+    "detail_first_key_max_ms": 2.731,
+    "page_target_passed": true,
+    "detail_target_passed": true,
+    "snapshot_builds_before": 0,
+    "snapshot_builds_after": 0,
+    "checks": [
+      "pinned versions",
+      "four starts",
+      "five repeated rounds",
+      "20 stratified first-key details",
+      "unheld search/detail",
+      "empty search",
+      "409 invalid version",
+      "26 fields asc/desc sorting",
+      "seven views",
+      "no full snapshot rebuild"
+    ],
+    "cold_definition": "fresh per-stock detail key in this acceptance; shared market/holder inputs precomputed, API and first request may have loaded them"
+  },
+  "runtime_lake_configured": false,
+  "services_stopped": true,
+  "full_snapshot_rebuild_run": false,
+  "known_limits": [
+    "固定截止日2026-11-09；保留原缺项及本地近似",
+    "未验证全部筛选组合",
+    "未执行19GB全量候选重建；只验证必要的小样候选克隆、运行边界和真实非默认查询"
+  ],
+  "frozen_inputs_after_queries": {
+    "files_verified_after_queries": 787,
+    "links": 0,
+    "unexpected_files": 0,
+    "sha256sums_sha256": "3a859664449dd1a2c3540f200d69e7768978fb588cc917cd849b3f5809d388c6"
+  }
+}

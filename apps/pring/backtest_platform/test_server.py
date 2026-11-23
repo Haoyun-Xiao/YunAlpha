@@ -1,0 +1,1351 @@
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
+
+import pandas as pd
+
+from . import server
+
+
+class PringStageTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        server.store.ensure_loaded()
+
+    def test_monthly_stage_workbook_is_loaded(self) -> None:
+        summary = server.store.pring_summary()
+        self.assertEqual(summary["source"], server.PRING_FILE_NAME)
+        self.assertEqual(summary["rows"], 121)
+        self.assertEqual(set(server.store.pring_df["stage"]), set(range(1, 9)))
+
+    def test_default_selection_uses_requested_indexes(self) -> None:
+        self.assertEqual(
+            server.store.default_selection(),
+            {
+                "equity": [
+                    "index:000852.SH",
+                    "index:932000.CSI",
+                    "index:000300.SH",
+                    "index:000905.SH",
+                    "index:399006.SZ",
+                ],
+                "commodity": ["index:NHCI.NH"],
+                "convertible": ["index:931078.CSI"],
+                "pure_bond": ["index:H11001.CSI"],
+            },
+        )
+
+    def test_asset_libraries_are_loaded_from_category_folders(self) -> None:
+        assets_by_module = {
+            module: [meta for meta in server.store.meta.values() if meta.module == module]
+            for module in ("fund", "index", "enhanced")
+        }
+        self.assertEqual(len(assets_by_module["fund"]), 18)
+        self.assertEqual(len(assets_by_module["index"]), 108)
+        self.assertEqual(len(assets_by_module["enhanced"]), 164)
+
+        expected_counts = {
+            "fund": {"equity": 7, "commodity": 4, "convertible": 1, "pure_bond": 6},
+            "index": {"equity": 101, "commodity": 1, "convertible": 1, "pure_bond": 5},
+            "enhanced": {"equity": 150, "commodity": 3, "convertible": 10, "sub_strategy": 1},
+        }
+        for module, category_counts in expected_counts.items():
+            for category, count in category_counts.items():
+                self.assertEqual(
+                    sum(meta.category == category for meta in assets_by_module[module]),
+                    count,
+                )
+
+        self.assertEqual(
+            server.store.meta["enhanced:000297.OF"].name,
+            "鹏华可转债债券A",
+        )
+        self.assertEqual(
+            server.store.meta["enhanced:000297.OF"].category,
+            "convertible",
+        )
+        self.assertEqual(server.store.meta["index:931719.CSI"].name, "CS电池")
+        self.assertEqual(server.store.meta["index:931719.CSI"].category, "equity")
+        self.assertEqual(server.store.meta["index:399365.SZ"].name, "国证粮食")
+        industry_rotation = server.store.meta["enhanced:行业轮动"]
+        self.assertEqual(industry_rotation.category, "sub_strategy")
+        self.assertEqual(industry_rotation.assetClass, "equity")
+
+    def test_fund_manager_assets_and_labels_are_loaded(self) -> None:
+        manager_assets = [
+            meta for meta in server.store.meta.values() if meta.module == "manager"
+        ]
+        self.assertEqual(len(manager_assets), 52)
+        self.assertEqual(
+            {meta.cluster for meta in manager_assets},
+            {"防守压仓", "核心稳健", "进攻弹性"},
+        )
+        self.assertEqual(
+            {
+                cluster: sum(meta.cluster == cluster for meta in manager_assets)
+                for cluster in ("进攻弹性", "核心稳健", "防守压仓")
+            },
+            {"进攻弹性": 29, "核心稳健": 19, "防守压仓": 4},
+        )
+        sample = server.store.meta["manager:008134.OF"]
+        self.assertEqual(sample.manager, "伍旋")
+        self.assertEqual(sample.roleLabel, "极致防守·压舱石")
+        self.assertIn("近全周期有效", sample.fullLabel)
+
+    def test_asset_payload_exposes_default_benchmark(self) -> None:
+        payload = server.store.grouped_assets()
+        self.assertEqual(payload["apiVersion"], server.APP_VERSION)
+        self.assertEqual(payload["defaultBenchmarkId"], "index:000300.SH")
+        enhanced_categories = {asset["category"] for asset in payload["groups"]["enhanced"]}
+        self.assertIn("sub_strategy", enhanced_categories)
+        self.assertNotIn("sub_strategy", payload["defaultStageWeights"]["1"])
+
+    def test_result_chart_card_ids_match_their_canvases(self) -> None:
+        html = (server.STATIC_DIR / "index.html").read_text(encoding="utf-8")
+        expected_pairs = {
+            "annualReturnChartCard": "annualReturnChart",
+            "annualContributionChartCard": "annualContributionChart",
+            "contributionChartCard": "contributionChart",
+        }
+        for card_id, canvas_id in expected_pairs.items():
+            start = html.index(f'id="{card_id}"')
+            end = html.index("</article>", start)
+            self.assertIn(f'id="{canvas_id}"', html[start:end])
+
+    def test_enhanced_sub_strategy_is_prioritized_in_asset_library(self) -> None:
+        script = (server.STATIC_DIR / "app.js").read_text(encoding="utf-8")
+        self.assertIn(
+            'const enhancedAssetCategoryOrder = ["sub_strategy", ...categoryOrder];',
+            script,
+        )
+        self.assertIn(
+            'state.activeTab === "enhanced" ? enhancedAssetCategoryOrder : assetCategoryOrder',
+            script,
+        )
+
+    def test_industry_rotation_uses_signal_quarter_for_next_quarter_top4(self) -> None:
+        nav, holdings = server.build_industry_rotation_nav(
+            server.INDUSTRY_ROTATION_DIR / server.INDUSTRY_ROTATION_BOARD_FILE,
+            server.INDUSTRY_ROTATION_DIR / server.INDUSTRY_ROTATION_INDEX_FILE,
+        )
+        self.assertEqual(
+            holdings["2021Q2"],
+            ["汽车零部件", "细分化工", "电网设备主题", "半导体材料设备"],
+        )
+        self.assertGreater(len(nav), 40)
+        self.assertGreater(nav.iloc[-1], 0)
+
+    def test_stage_target_mapping(self) -> None:
+        expected = {
+            1: "convertible",
+            2: "equity",
+            3: "equity",
+            4: "commodity",
+            5: "commodity",
+            6: "pure_bond",
+            7: "commodity",
+            8: "convertible",
+        }
+        for stage, dominant in expected.items():
+            weights = server.stage_target_weights(stage)
+            self.assertAlmostEqual(weights[dominant], 0.70)
+            self.assertAlmostEqual(sum(weights.values()), 1.0)
+            self.assertTrue(all(value == 0.10 for key, value in weights.items() if key != dominant))
+
+    def test_five_stage_weight_profiles_form_equity_to_bond_ladder(self) -> None:
+        profiles = server.stage_weight_profiles()
+        self.assertEqual(list(profiles), ["1", "2", "3", "4", "5"])
+        self.assertEqual(profiles["3"]["weights"], server.default_stage_weights())
+
+        level_one_equity_stage = profiles["1"]["weights"]["2"]
+        self.assertAlmostEqual(level_one_equity_stage["equity"], 0.80)
+        self.assertTrue(
+            all(
+                abs(level_one_equity_stage[category] - 1.0 / 15.0) < 1e-12
+                for category in ("commodity", "convertible", "pure_bond")
+            )
+        )
+
+        level_one_commodity_stage = profiles["1"]["weights"]["4"]
+        for category, expected in {
+            "equity": 0.35,
+            "commodity": 0.45,
+            "convertible": 0.10,
+            "pure_bond": 0.10,
+        }.items():
+            self.assertAlmostEqual(level_one_commodity_stage[category], expected)
+
+        level_five_bond_stage = profiles["5"]["weights"]["6"]
+        self.assertAlmostEqual(level_five_bond_stage["pure_bond"], 0.80)
+        self.assertTrue(
+            all(
+                abs(level_five_bond_stage[category] - 1.0 / 15.0) < 1e-12
+                for category in ("equity", "commodity", "convertible")
+            )
+        )
+
+        level_five_convertible_stage = profiles["5"]["weights"]["1"]
+        for category, expected in {
+            "equity": 0.10,
+            "commodity": 0.10,
+            "convertible": 0.45,
+            "pure_bond": 0.35,
+        }.items():
+            self.assertAlmostEqual(level_five_convertible_stage[category], expected)
+
+        for profile in profiles.values():
+            parsed = server.parse_stage_weights(profile["weights"])
+            for weights in parsed.values():
+                self.assertAlmostEqual(sum(weights.values()), 1.0)
+
+    def test_custom_stage_weights_are_validated(self) -> None:
+        custom = server.default_stage_weights()
+        custom["2"] = {
+            "equity": 0.60,
+            "commodity": 0.15,
+            "convertible": 0.10,
+            "pure_bond": 0.15,
+        }
+        parsed = server.parse_stage_weights(custom)
+        self.assertEqual(parsed[2], custom["2"])
+
+        custom["2"]["pure_bond"] = 0.20
+        with self.assertRaisesRegex(ValueError, "合计必须为 100%"):
+            server.parse_stage_weights(custom)
+
+        custom = server.default_stage_weights()
+        custom["9"] = custom["8"]
+        with self.assertRaisesRegex(ValueError, "存在未知 Stage 9"):
+            server.parse_stage_weights(custom)
+
+    def test_dominant_asset_uses_weight_and_tie_priority(self) -> None:
+        custom = server.parse_stage_weights(server.default_stage_weights())
+        custom[1] = {
+            "equity": 0.25,
+            "commodity": 0.25,
+            "convertible": 0.25,
+            "pure_bond": 0.25,
+        }
+        self.assertEqual(server.dominant_asset_for_stage(1, custom), "equity")
+
+        custom[1] = {
+            "equity": 0.10,
+            "commodity": 0.40,
+            "convertible": 0.40,
+            "pure_bond": 0.10,
+        }
+        self.assertEqual(server.dominant_asset_for_stage(1, custom), "commodity")
+
+    def test_quarter_rebalance_occurs_after_quarter_end(self) -> None:
+        pring = make_pring([("2023-12-31", 1)])
+        dates = pd.bdate_range("2024-01-02", "2024-04-03")
+        events = server.build_rebalance_events(pring, dates)
+        self.assertEqual(events[pd.Timestamp("2024-04-01")]["type"], "quarter_rebalance")
+        self.assertEqual(events[pd.Timestamp("2024-04-01")]["signal_date"], pd.Timestamp("2024-03-31"))
+
+    def test_stage_change_does_not_reset_natural_quarter_rebalance(self) -> None:
+        pring = make_pring([("2023-12-31", 1), ("2024-02-29", 2)])
+        dates = pd.bdate_range("2024-01-02", "2024-04-03")
+        events = server.build_rebalance_events(pring, dates)
+        self.assertEqual(events[pd.Timestamp("2024-03-01")]["type"], "stage_change")
+        self.assertEqual(events[pd.Timestamp("2024-04-01")]["type"], "quarter_rebalance")
+
+    def test_stage_change_on_quarter_rebalance_date_is_merged(self) -> None:
+        pring = make_pring([("2023-12-31", 1), ("2024-03-31", 2)])
+        dates = pd.bdate_range("2024-01-02", "2024-04-03")
+        events = server.build_rebalance_events(pring, dates)
+        self.assertEqual(events[pd.Timestamp("2024-04-01")]["type"], "stage_change")
+        self.assertTrue(events[pd.Timestamp("2024-04-01")]["quarter_rebalance"])
+        self.assertEqual(sum(event["type"] == "quarter_rebalance" for event in events.values()), 0)
+
+    def test_weekend_month_end_uses_next_trading_day(self) -> None:
+        pring = make_pring([("2024-07-31", 1), ("2024-08-31", 8)])
+        dates = pd.bdate_range("2024-08-01", "2024-09-04")
+        events = server.build_rebalance_events(pring, dates)
+        self.assertEqual(events[pd.Timestamp("2024-09-02")]["type"], "stage_change")
+        self.assertEqual(events[pd.Timestamp("2024-09-02")]["stage"], 8)
+
+
+class PortfolioAccountingTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.active = {
+            "equity": ["e1", "e2"],
+            "commodity": ["c1"],
+            "convertible": ["cb1"],
+            "pure_bond": ["b1", "b2"],
+        }
+
+    def test_holdings_drift_between_rebalances_and_reset_equal(self) -> None:
+        targets = server.stage_target_weights(2)
+        main, escape = server.rebalance_values(1.0, targets, self.active)
+        server.apply_returns(
+            main,
+            escape,
+            pd.Series({"e1": 0.10, "e2": 0.0, "c1": 0.0, "cb1": 0.0, "b1": 0.0, "b2": 0.0}),
+        )
+        self.assertGreater(main["e1"], main["e2"])
+        total = server.portfolio_total(main, escape)
+        main, escape = server.rebalance_values(total, targets, self.active)
+        self.assertAlmostEqual(main["e1"], main["e2"])
+        self.assertAlmostEqual(server.portfolio_total(main, escape), total)
+
+    def test_metric_annualizes_by_elapsed_calendar_time(self) -> None:
+        weekly_dates = pd.date_range("2020-01-01", "2022-01-01", freq="7D")
+        daily_dates = pd.date_range("2020-01-01", "2022-01-01", freq="D")
+        weekly_nav = pd.Series(
+            [1.0 + 0.21 * index / (len(weekly_dates) - 1) for index in range(len(weekly_dates))],
+            index=weekly_dates,
+        )
+        daily_nav = pd.Series(
+            [1.0 + 0.21 * index / (len(daily_dates) - 1) for index in range(len(daily_dates))],
+            index=daily_dates,
+        )
+
+        weekly_metric = server.metric(weekly_nav, "周频")
+        daily_metric = server.metric(daily_nav, "日频")
+        elapsed_years = (weekly_dates[-1] - weekly_dates[0]).days / 365.2425
+        expected = weekly_nav.iloc[-1] ** (1.0 / elapsed_years) - 1.0
+
+        self.assertAlmostEqual(weekly_metric["annualReturn"], expected, places=6)
+        self.assertAlmostEqual(
+            weekly_metric["annualReturn"],
+            daily_metric["annualReturn"],
+            places=3,
+        )
+        self.assertLess(weekly_metric["annualReturn"], 0.11)
+
+    def test_observation_label_distinguishes_daily_and_weekly_series(self) -> None:
+        self.assertEqual(
+            server.observation_label(pd.bdate_range("2024-01-01", periods=60)),
+            "交易日",
+        )
+        self.assertEqual(
+            server.observation_label(pd.date_range("2024-01-04", periods=60, freq="7D")),
+            "净值观测日",
+        )
+
+    def test_kst_windows_and_calculation(self) -> None:
+        dates = pd.bdate_range("2020-01-01", periods=360)
+        nav = pd.Series(1.0 + pd.RangeIndex(len(dates)) / 1000.0, index=dates)
+        result = server.build_long_kst(nav)
+
+        self.assertEqual(result["kst"].first_valid_index(), dates[279])
+        self.assertEqual(result["slope10"].first_valid_index(), dates[289])
+        self.assertEqual(result["signal"].first_valid_index(), dates[298])
+
+        expected = 0.0
+        for roc_period, smooth_period, weight in server.KST_COMPONENTS:
+            roc = nav / nav.shift(roc_period) - 1.0
+            expected += float(roc.iloc[-smooth_period:].mean()) * weight
+        self.assertAlmostEqual(result["kst"].iloc[-1], expected, places=12)
+
+    def test_risk_state_uses_three_tiers_and_warmup_exit(self) -> None:
+        date = pd.Timestamp("2024-07-01")
+        index = pd.DatetimeIndex([date])
+        ma20 = pd.Series([1.0], index=index)
+
+        above = server.risk_state_for_date(
+            "equity",
+            True,
+            pd.Series([1.01], index=index),
+            ma20,
+            make_kst(index, kst=-1.0, signal=1.0, slope=-1.0),
+            date,
+        )
+        self.assertEqual(above["targetScale"], 1.0)
+
+        partial = server.risk_state_for_date(
+            "equity",
+            True,
+            pd.Series([0.99], index=index),
+            ma20,
+            make_kst(index, kst=0.5, signal=0.4, slope=-0.1),
+            date,
+        )
+        self.assertAlmostEqual(partial["targetScale"], 4.0 / 7.0)
+        self.assertFalse(partial["kstWeak"])
+
+        exit_state = server.risk_state_for_date(
+            "equity",
+            True,
+            pd.Series([0.99], index=index),
+            ma20,
+            make_kst(index, kst=0.3, signal=0.4, slope=-0.1),
+            date,
+        )
+        self.assertEqual(exit_state["targetScale"], 0.0)
+        self.assertTrue(exit_state["kstWeak"])
+
+        warmup = server.risk_state_for_date(
+            "equity",
+            True,
+            pd.Series([0.99], index=index),
+            ma20,
+            make_kst(index),
+            date,
+        )
+        self.assertEqual(warmup["targetScale"], 0.0)
+        self.assertFalse(warmup["kstReady"])
+
+    def test_risk_calibration_only_changes_dominant_and_pure_bond(self) -> None:
+        main, _ = server.rebalance_values(1.0, server.stage_target_weights(2), self.active)
+        untouched_commodity = main["c1"]
+        untouched_convertible = main["cb1"]
+
+        applied = server.calibrate_risk_pair(main, "equity", self.active, 0.40)
+        weights = server.category_weights(main, {}, self.active)
+
+        self.assertAlmostEqual(applied, 0.40)
+        self.assertAlmostEqual(weights["equity"], 0.40)
+        self.assertAlmostEqual(weights["pure_bond"], 0.40)
+        self.assertAlmostEqual(main["c1"], untouched_commodity)
+        self.assertAlmostEqual(main["cb1"], untouched_convertible)
+
+    def test_full_rebalance_applies_current_risk_tier(self) -> None:
+        weights = server.risk_adjusted_weights(2, {"targetScale": 4.0 / 7.0})
+        self.assertAlmostEqual(weights["equity"], 0.40)
+        self.assertAlmostEqual(weights["commodity"], 0.10)
+        self.assertAlmostEqual(weights["convertible"], 0.10)
+        self.assertAlmostEqual(weights["pure_bond"], 0.40)
+        self.assertEqual(
+            server.risk_adjusted_weights(1, {"targetScale": 0.0}),
+            server.stage_target_weights(1),
+        )
+
+    def test_custom_dominant_weight_scales_risk_tier_by_four_sevenths(self) -> None:
+        custom = server.parse_stage_weights(server.default_stage_weights())
+        custom[2] = {
+            "equity": 0.60,
+            "commodity": 0.15,
+            "convertible": 0.10,
+            "pure_bond": 0.15,
+        }
+        weights = server.risk_adjusted_weights(
+            2,
+            {"targetScale": 4.0 / 7.0},
+            custom,
+        )
+        self.assertAlmostEqual(weights["equity"], 0.60 * 4.0 / 7.0)
+        self.assertAlmostEqual(weights["commodity"], 0.15)
+        self.assertAlmostEqual(weights["convertible"], 0.10)
+        self.assertAlmostEqual(
+            weights["pure_bond"],
+            0.15 + 0.60 * 3.0 / 7.0,
+        )
+
+    def test_risk_uses_dynamic_dominant_instead_of_default_stage_mapping(self) -> None:
+        custom = server.parse_stage_weights(server.default_stage_weights())
+        custom[1] = {
+            "equity": 0.60,
+            "commodity": 0.15,
+            "convertible": 0.10,
+            "pure_bond": 0.15,
+        }
+        weights = server.risk_adjusted_weights(
+            1,
+            {"targetScale": 4.0 / 7.0},
+            custom,
+        )
+        self.assertAlmostEqual(weights["equity"], 0.60 * 4.0 / 7.0)
+        self.assertAlmostEqual(weights["convertible"], 0.10)
+        self.assertAlmostEqual(weights["pure_bond"], 0.15 + 0.60 * 3.0 / 7.0)
+
+    def test_requested_date_range_is_clipped_to_common_trading_days(self) -> None:
+        dates = pd.bdate_range("2022-01-03", "2024-12-31")
+        all_dates, selected, window = server.select_backtest_dates(
+            dates,
+            pd.Timestamp("2021-12-31"),
+            {"start": "2023-01-01", "end": "2024-06-30"},
+        )
+        self.assertEqual(all_dates[0], pd.Timestamp("2022-01-03"))
+        self.assertEqual(selected[0], pd.Timestamp("2023-01-02"))
+        self.assertEqual(selected[-1], pd.Timestamp("2024-06-28"))
+        self.assertEqual(window["requestedStart"], "2023-01-01")
+        self.assertEqual(window["requestedEnd"], "2024-06-30")
+
+    def test_requested_date_range_rejects_dates_outside_common_window(self) -> None:
+        dates = pd.bdate_range("2022-01-03", "2024-12-31")
+        with self.assertRaisesRegex(ValueError, "不能早于共同可用起点"):
+            server.select_backtest_dates(
+                dates,
+                pd.Timestamp("2021-12-31"),
+                {"start": "2022-01-01"},
+            )
+        with self.assertRaisesRegex(ValueError, "不能晚于共同可用终点"):
+            server.select_backtest_dates(
+                dates,
+                pd.Timestamp("2021-12-31"),
+                {"end": "2025-01-01"},
+            )
+
+    def test_quarterly_equal_weight_nav_rebalances_after_quarter_end(self) -> None:
+        dates = pd.DatetimeIndex(
+            pd.to_datetime(["2023-03-30", "2023-03-31", "2023-04-03"])
+        )
+        returns = pd.DataFrame(
+            {
+                "A": [0.0, 1.0, 0.0],
+                "B": [0.0, 0.0, 1.0],
+            },
+            index=dates,
+        )
+        nav = server.build_quarterly_equal_weight_nav(returns, ["A", "B"])
+        self.assertAlmostEqual(nav.iloc[0], 1.0)
+        self.assertAlmostEqual(nav.iloc[1], 1.5)
+        self.assertAlmostEqual(nav.iloc[2], 2.25)
+
+
+class BacktestIntegrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        server.store.ensure_loaded()
+
+    def test_no_ma20_matches_theory_and_attribution_reconciles(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+            }
+        )
+        for row in result["series"]:
+            self.assertAlmostEqual(row["strategy"], row["theory"], places=6)
+            weight_sum = (
+                row["equityWeight"]
+                + row["commodityWeight"]
+                + row["convertibleWeight"]
+                + row["pureBondWeight"]
+            )
+            self.assertAlmostEqual(weight_sum, 1.0, places=5)
+        final_return = result["series"][-1]["strategy"] - 1.0
+        self.assertAlmostEqual(final_return, result["contributionSummary"]["totalPoints"], places=6)
+        self.assertTrue(
+            all(
+                {"stage", "dominantAsset", "rebalanceType"}.issubset(log)
+                for log in result["tradeLogs"]
+            )
+        )
+        stats = result["rebalanceStats"]
+        self.assertLessEqual(stats["strategyTotal"], stats["stageChanges"] + stats["quarterRebalances"])
+
+        efficiency = {row["key"]: row for row in result["efficiency"]}
+        pure_bond_contribution = next(
+            item
+            for item in result["contributionSummary"]["items"]
+            if item["key"] == "pureBond"
+        )
+        self.assertGreater(pure_bond_contribution["points"], 0)
+        self.assertAlmostEqual(
+            efficiency["pure_bond"]["profitShare"],
+            pure_bond_contribution["share"],
+            places=6,
+        )
+        self.assertGreater(efficiency["pure_bond"]["efficiency"], 0)
+
+    def test_bond_tilt_efficiency_includes_pure_bond_profit(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+                "stageWeights": server.build_stage_weight_profile("5"),
+            }
+        )
+        efficiency = {row["key"]: row for row in result["efficiency"]}
+        pure_bond = efficiency["pure_bond"]
+        self.assertGreater(pure_bond["capitalShare"], 0.30)
+        self.assertGreater(pure_bond["profitShare"], 0.15)
+        self.assertGreater(pure_bond["efficiency"], 0)
+
+    def test_default_benchmark_uses_hs300_index(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+            }
+        )
+        self.assertEqual(result["benchmark"]["id"], server.DEFAULT_BENCHMARK_ID)
+        self.assertEqual(result["benchmark"]["name"], "沪深300")
+        self.assertFalse(result["benchmark"]["partial"])
+        self.assertEqual(result["metrics"][2]["name"], "沪深300基准")
+
+    def test_industry_rotation_sub_strategy_can_drive_equity_basket(self) -> None:
+        baskets = server.store.default_selection()
+        baskets["equity"] = ["enhanced:行业轮动"]
+        result = server.run_backtest(
+            {
+                "baskets": baskets,
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": False},
+            }
+        )
+        equity_asset = result["selectedAssets"]["equity"][0]
+        self.assertEqual(equity_asset["category"], "sub_strategy")
+        self.assertEqual(equity_asset["assetClass"], "equity")
+        self.assertGreater(len(result["series"]), 40)
+        self.assertEqual(result["ma20Controls"]["equity"], True)
+
+    def test_asset_declared_as_equity_can_run_in_commodity_basket(self) -> None:
+        baskets = server.store.default_selection()
+        baskets["commodity"] = ["enhanced:行业轮动"]
+        result = server.run_backtest(
+            {
+                "baskets": baskets,
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+            }
+        )
+        selected = result["selectedAssets"]["commodity"][0]
+        self.assertEqual(selected["id"], "enhanced:行业轮动")
+        self.assertEqual(selected["assetClass"], "equity")
+
+    def test_single_category_mode_runs_multiple_assets_without_stage(self) -> None:
+        result = server.run_backtest(
+            {
+                "backtestMode": "single_category",
+                "baskets": {
+                    "equity": ["index:000300.SH", "index:000905.SH"],
+                    "commodity": [],
+                    "convertible": [],
+                    "pure_bond": [],
+                },
+                "benchmarkId": "index:000300.SH",
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+                "dateRange": {"start": "2020-01-01", "end": "2021-12-31"},
+            }
+        )
+        self.assertEqual(result["backtestMode"], "single_category")
+        self.assertEqual(result["selectedCategory"], "equity")
+        self.assertEqual(result["selectedAssetCount"], 2)
+        self.assertFalse(result["riskEnabled"])
+        self.assertEqual([item["name"] for item in result["metrics"]], [
+            "季度等权组合",
+            "沪深300基准",
+        ])
+        self.assertFalse(result["stageAttribution"])
+        self.assertTrue(all(row["stage"] is None for row in result["series"]))
+        self.assertTrue(
+            all(
+                abs(row["strategy"] - row["theory"]) < 1e-9
+                for row in result["series"]
+            )
+        )
+        self.assertTrue(
+            any(
+                log["rebalanceType"] == "quarter_rebalance"
+                for log in result["tradeLogs"]
+            )
+        )
+
+    def test_weekly_enhanced_assets_use_calendar_cagr(self) -> None:
+        result = server.run_backtest(
+            {
+                "backtestMode": "single_category",
+                "baskets": {
+                    "equity": [
+                        "enhanced:九章幻方沪深300量化多策略1号",
+                        "enhanced:九坤日享中证500指数增强1号",
+                        "enhanced:平方和鼎盛中证1000指数增强23号",
+                    ],
+                    "commodity": [],
+                    "convertible": [],
+                    "pure_bond": [],
+                },
+                "benchmarkId": "index:000300.SH",
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+                "dateRange": {"start": "2019-07-04", "end": "2026-04-30"},
+            }
+        )
+        strategy_metric = result["metrics"][0]
+        benchmark_metric = result["metrics"][1]
+        elapsed_years = (
+            pd.Timestamp(result["window"]["end"])
+            - pd.Timestamp(result["window"]["start"])
+        ).days / 365.2425
+        expected_strategy = (
+            (1.0 + strategy_metric["totalReturn"]) ** (1.0 / elapsed_years)
+            - 1.0
+        )
+
+        self.assertEqual(result["window"]["days"], 387)
+        self.assertEqual(result["window"]["observationLabel"], "净值观测日")
+        self.assertAlmostEqual(
+            strategy_metric["annualReturn"],
+            expected_strategy,
+            places=6,
+        )
+        self.assertLess(strategy_metric["annualReturn"], 0.30)
+        self.assertLess(benchmark_metric["annualReturn"], 0.10)
+
+    def test_single_category_mode_rejects_multiple_nonempty_baskets(self) -> None:
+        with self.assertRaisesRegex(ValueError, "必须且只能使用一个资产篮子"):
+            server.run_backtest(
+                {
+                    "backtestMode": "single_category",
+                    "baskets": {
+                        "equity": ["index:000300.SH"],
+                        "commodity": ["index:NHCI.NH"],
+                        "convertible": [],
+                        "pure_bond": [],
+                    },
+                    "spliceSimulation": {"enabled": False, "baskets": {}},
+                }
+            )
+
+    def test_single_category_mode_is_mutually_exclusive_with_splice(self) -> None:
+        with self.assertRaisesRegex(ValueError, "不能同时开启模拟拼接"):
+            server.run_backtest(
+                {
+                    "backtestMode": "single_category",
+                    "baskets": {
+                        "equity": ["index:000300.SH"],
+                        "commodity": [],
+                        "convertible": [],
+                        "pure_bond": [],
+                    },
+                    "spliceSimulation": {"enabled": True, "baskets": {}},
+                }
+            )
+
+    def test_single_category_risk_escapes_to_total_bond_index(self) -> None:
+        result = server.run_backtest(
+            {
+                "backtestMode": "single_category",
+                "baskets": {
+                    "equity": ["index:000300.SH", "index:000905.SH"],
+                    "commodity": [],
+                    "convertible": [],
+                    "pure_bond": [],
+                },
+                "benchmarkId": "index:000300.SH",
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": False},
+                "dateRange": {"start": "2020-01-01", "end": "2024-12-31"},
+            }
+        )
+        self.assertTrue(result["riskEnabled"])
+        self.assertEqual(result["escapeAsset"]["id"], "index:H11001.CSI")
+        self.assertEqual(len(result["metrics"]), 3)
+        self.assertTrue(result["riskDiagnostics"])
+        self.assertTrue(any(row["escapeWeight"] > 0 for row in result["series"]))
+        for row in result["series"]:
+            self.assertAlmostEqual(
+                row["selectedWeight"] + row["escapeWeight"],
+                1.0,
+                places=5,
+            )
+        self.assertEqual(
+            result["rebalanceStats"]["riskActions"],
+            len(result["riskDiagnostics"]),
+        )
+
+    def test_switching_benchmark_only_changes_benchmark_results(self) -> None:
+        base = {
+            "baskets": server.store.default_selection(),
+            "spliceSimulation": {"enabled": False, "baskets": {}},
+            "ma20Controls": {"equity": False, "commodity": False},
+            "dateRange": {"start": "2020-01-01", "end": "2024-12-31"},
+        }
+        hs300 = server.run_backtest(
+            {**base, "benchmarkId": "index:000300.SH"}
+        )
+        star50 = server.run_backtest(
+            {**base, "benchmarkId": "index:000688.SH"}
+        )
+
+        self.assertEqual(
+            [row["strategy"] for row in hs300["series"]],
+            [row["strategy"] for row in star50["series"]],
+        )
+        self.assertNotEqual(
+            hs300["series"][-1]["benchmark"],
+            star50["series"][-1]["benchmark"],
+        )
+        self.assertNotEqual(
+            hs300["annualAttribution"][-1]["benchmark"],
+            star50["annualAttribution"][-1]["benchmark"],
+        )
+        self.assertNotEqual(
+            hs300["stageAttribution"][-1]["benchmarkReturn"],
+            star50["stageAttribution"][-1]["benchmarkReturn"],
+        )
+
+    def test_partial_benchmark_keeps_strategy_window_and_nulls_uncovered_periods(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "benchmarkId": "index:000688.SH",
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+            }
+        )
+        self.assertEqual(result["window"]["start"], "2016-04-01")
+        self.assertTrue(result["benchmark"]["partial"])
+        self.assertEqual(result["benchmark"]["comparisonStart"], "2019-12-31")
+        self.assertIsNone(result["series"][0]["benchmark"])
+        first_comparison = next(
+            row for row in result["series"] if row["benchmark"] is not None
+        )
+        self.assertEqual(first_comparison["benchmark"], 1.0)
+        self.assertTrue(
+            all(
+                row["benchmark"] is None
+                for row in result["annualAttribution"]
+                if row["year"] in {"2016", "2017", "2018"}
+            )
+        )
+        self.assertTrue(
+            any(row["benchmarkReturn"] is None for row in result["stageAttribution"])
+        )
+
+    def test_unknown_or_non_overlapping_benchmark_is_rejected(self) -> None:
+        base = {
+            "baskets": server.store.default_selection(),
+            "spliceSimulation": {"enabled": False, "baskets": {}},
+            "ma20Controls": {"equity": False, "commodity": False},
+        }
+        with self.assertRaisesRegex(ValueError, "对照基准不存在"):
+            server.run_backtest({**base, "benchmarkId": "index:UNKNOWN.TEST"})
+        with self.assertRaisesRegex(ValueError, "没有重叠数据"):
+            server.run_backtest(
+                {
+                    **base,
+                    "benchmarkId": "index:000688.SH",
+                    "dateRange": {"start": "2016-04-01", "end": "2017-12-31"},
+                }
+            )
+
+    def test_benchmark_with_only_one_overlapping_day_is_rejected(self) -> None:
+        asset_id = "index:ONE.DAY"
+        series = pd.Series(
+            [1.0],
+            index=pd.DatetimeIndex([pd.Timestamp("2024-01-02")]),
+        )
+        meta = server.AssetMeta(
+            id=asset_id,
+            code="ONE.DAY",
+            name="单日基准",
+            module="index",
+            start="2024-01-02",
+            end="2024-01-02",
+            count=1,
+            category="equity",
+        )
+        with (
+            patch.dict(server.store.assets, {asset_id: series}),
+            patch.dict(server.store.meta, {asset_id: meta}),
+            self.assertRaisesRegex(ValueError, "不足 2 个交易日"),
+        ):
+            server.run_backtest(
+                {
+                    "baskets": server.store.default_selection(),
+                    "benchmarkId": asset_id,
+                    "spliceSimulation": {"enabled": False, "baskets": {}},
+                    "ma20Controls": {"equity": False, "commodity": False},
+                    "dateRange": {"start": "2024-01-01", "end": "2024-03-31"},
+                }
+            )
+
+    def test_splice_switch_preserves_accounting(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": fund_selection(),
+                "spliceSimulation": {
+                    "enabled": True,
+                    "baskets": {
+                        "equity": ["index:000300.SH"],
+                        "commodity": ["index:NHCI.NH"],
+                        "convertible": ["index:931078.CSI"],
+                        "pure_bond": ["index:H11001.CSI"],
+                    },
+                },
+                "ma20Controls": {"equity": True, "commodity": True},
+            }
+        )
+        self.assertEqual(result["window"]["start"], "2016-04-01")
+        self.assertTrue(result["spliceContext"]["enabled"])
+        self.assertTrue(
+            any(log["rebalanceType"] == "splice_switch" for log in result["tradeLogs"])
+        )
+        final_return = result["series"][-1]["strategy"] - 1.0
+        self.assertAlmostEqual(final_return, result["contributionSummary"]["totalPoints"], places=6)
+
+    def test_custom_stage_weights_are_applied_to_portfolio(self) -> None:
+        custom = server.default_stage_weights()
+        custom["2"] = {
+            "equity": 0.60,
+            "commodity": 0.15,
+            "convertible": 0.10,
+            "pure_bond": 0.15,
+        }
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False},
+                "stageWeights": custom,
+            }
+        )
+        self.assertEqual(result["stageWeights"]["2"], custom["2"])
+        stage_two_log = next(
+            log
+            for log in result["tradeLogs"]
+            if log["stage"] == 2
+            and log["rebalanceType"] in {"initial", "stage_change", "quarter_rebalance"}
+        )
+        self.assertAlmostEqual(stage_two_log["equityWeight"], 0.60)
+        self.assertAlmostEqual(stage_two_log["commodityWeight"], 0.15)
+
+    def test_stage_attribution_is_chronological_and_reconciles(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": True},
+            }
+        )
+        rows = result["stageAttribution"]
+        self.assertTrue(rows)
+        self.assertEqual(rows, sorted(rows, key=lambda row: row["start"]))
+        self.assertEqual(rows[0]["start"], result["window"]["start"])
+        self.assertEqual(rows[-1]["end"], result["window"]["end"])
+
+        daily_stages = [row["stage"] for row in result["series"]]
+        expected_segments = 1 + sum(
+            current != previous
+            for previous, current in zip(daily_stages, daily_stages[1:])
+        )
+        self.assertEqual(len(rows), expected_segments)
+        for row in rows:
+            contribution_total = sum(
+                row[f"{category}Contribution"]
+                for category in server.CATEGORY_PRIORITY
+            )
+            self.assertAlmostEqual(
+                contribution_total,
+                row["strategyReturn"],
+                places=5,
+            )
+            self.assertEqual(
+                row["dominantAsset"],
+                server.dominant_asset_for_stage(
+                    row["stage"],
+                    server.parse_stage_weights(result["stageWeights"]),
+                ),
+            )
+            self.assertGreater(row["tradingDays"], 0)
+            self.assertGreaterEqual(row["consecutiveMonths"], 1)
+            ranked_assets = sorted(
+                server.CATEGORY_PRIORITY,
+                key=lambda category: (
+                    -row[f"{category}Return"],
+                    server.CATEGORY_PRIORITY.index(category),
+                ),
+            )
+            self.assertEqual(
+                row["dominantRank"],
+                ranked_assets.index(row["dominantAsset"]) + 1,
+            )
+
+    def test_year_stage_attribution_splits_at_year_end_and_reconciles(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": True},
+            }
+        )
+        rows = result["yearStageAttribution"]
+        self.assertTrue(rows)
+        self.assertEqual(rows, sorted(rows, key=lambda row: row["start"]))
+        self.assertGreaterEqual(len(rows), len(result["stageAttribution"]))
+
+        daily_keys = [
+            (row["date"][:4], row["stage"])
+            for row in result["series"]
+        ]
+        expected_segments = 1 + sum(
+            current != previous
+            for previous, current in zip(daily_keys, daily_keys[1:])
+        )
+        self.assertEqual(len(rows), expected_segments)
+
+        for row in rows:
+            self.assertEqual(row["start"][:4], row["end"][:4])
+            contribution_total = sum(
+                row[f"{category}Contribution"]
+                for category in server.CATEGORY_PRIORITY
+            )
+            self.assertAlmostEqual(
+                contribution_total,
+                row["strategyReturn"],
+                places=5,
+            )
+            ranked_assets = sorted(
+                server.CATEGORY_PRIORITY,
+                key=lambda category: (
+                    -row[f"{category}Return"],
+                    server.CATEGORY_PRIORITY.index(category),
+                ),
+            )
+            self.assertEqual(
+                row["dominantRank"],
+                ranked_assets.index(row["dominantAsset"]) + 1,
+            )
+            self.assertIn(row["dominantRank"], {1, 2, 3, 4})
+
+    def test_custom_date_range_and_manager_asset(self) -> None:
+        baskets = server.store.default_selection()
+        baskets["equity"] = ["manager:008134.OF"]
+        result = server.run_backtest(
+            {
+                "baskets": baskets,
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": True},
+                "dateRange": {"start": "2023-01-01", "end": "2024-12-31"},
+            }
+        )
+        self.assertGreaterEqual(result["window"]["start"], "2023-01-01")
+        self.assertLessEqual(result["window"]["end"], "2024-12-31")
+        self.assertEqual(result["availableWindow"]["requestedStart"], "2023-01-01")
+        self.assertEqual(result["availableWindow"]["requestedEnd"], "2024-12-31")
+        selected = result["selectedAssets"]["equity"][0]
+        self.assertEqual(selected["manager"], "伍旋")
+        self.assertEqual(selected["cluster"], "防守压仓")
+
+    def test_risk_logs_use_previous_day_and_ignore_legacy_three_day(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": True, "commodity": True, "convertible": True},
+                "ma20ThreeDay": True,
+            }
+        )
+        self.assertNotIn("ma20ThreeDay", result)
+        self.assertEqual(result["ma20Controls"], {"equity": True, "commodity": True})
+        risk_logs = [
+            log for log in result["tradeLogs"] if log["rebalanceType"] == "risk_tier"
+        ]
+        self.assertTrue(risk_logs)
+        for log in risk_logs:
+            self.assertLess(log["riskSignalDate"], log["start"])
+            self.assertIn(log["riskTier"], {0.0, 0.4, 0.7})
+            self.assertTrue(
+                {
+                    "riskTransition",
+                    "ma20Above",
+                    "kst",
+                    "kstSignal",
+                    "kstSlope10",
+                    "kstReady",
+                    "kstWeak",
+                }.issubset(log)
+            )
+        self.assertEqual(result["rebalanceStats"]["riskActions"], len(risk_logs))
+
+    def test_convertible_dominant_stage_never_uses_risk_tier(self) -> None:
+        result = server.run_backtest(
+            {
+                "baskets": server.store.default_selection(),
+                "spliceSimulation": {"enabled": False, "baskets": {}},
+                "ma20Controls": {"equity": False, "commodity": False, "convertible": True},
+            }
+        )
+        convertible_events = [
+            log
+            for log in result["tradeLogs"]
+            if log["dominantAsset"] == "convertible"
+            and log["rebalanceType"] in {"initial", "stage_change", "quarter_rebalance"}
+        ]
+        self.assertTrue(convertible_events)
+        self.assertTrue(all(log["riskTier"] == 0.70 for log in convertible_events))
+
+
+class StrategyStoreTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        server.store.ensure_loaded()
+
+    def setUp(self) -> None:
+        self.temp_dir = TemporaryDirectory()
+        self.strategy_store = server.StrategyStore(
+            Path(self.temp_dir.name) / "saved_strategies.json"
+        )
+        self.config = {
+            "baskets": server.store.default_selection(),
+            "spliceSimulation": {"enabled": False, "baskets": {}},
+            "ma20Controls": {"equity": True, "commodity": False},
+            "dateRange": {"start": "2023-01-01", "end": "2024-12-31"},
+            "stageWeights": server.default_stage_weights(),
+            "stageWeightProfile": "3",
+        }
+
+    def tearDown(self) -> None:
+        self.temp_dir.cleanup()
+
+    def fake_run(self, raw_config):
+        config = self.strategy_store._normalize_config(raw_config)
+        snapshots = []
+        for asset_id in self.strategy_store._asset_ids(config):
+            meta = server.store.meta[asset_id]
+            snapshots.append(
+                {
+                    "id": meta.id,
+                    "code": meta.code,
+                    "name": meta.name,
+                    "module": meta.module,
+                    "category": meta.category,
+                }
+            )
+        return (
+            config,
+            snapshots,
+            {
+                "runAt": "2026-06-11T00:00:00Z",
+                "window": {"start": "2023-01-03", "end": "2024-12-31", "days": 480},
+                "totalReturn": 0.2,
+                "annualReturn": 0.1,
+                "maxDrawdown": -0.08,
+                "sharpe": 1.1,
+            },
+        )
+
+    def create_strategy(self, name="测试策略", tag_ids=None):
+        with patch.object(
+            self.strategy_store,
+            "_run_and_snapshot",
+            side_effect=self.fake_run,
+        ):
+            return self.strategy_store.create_strategy(
+                {
+                    "name": name,
+                    "notes": "持久化测试",
+                    "tagIds": tag_ids or [],
+                    "config": self.config,
+                }
+            )
+
+    def test_strategy_crud_duplicate_and_restart_persistence(self) -> None:
+        created = self.create_strategy()
+        with self.assertRaises(server.ApiError):
+            self.create_strategy("测试策略".upper())
+
+        duplicate = self.strategy_store.duplicate_strategy(created["id"], {})
+        self.assertEqual(duplicate["name"], "测试策略 - 副本")
+        updated = self.strategy_store.update_metadata(
+            created["id"],
+            {"name": "更新后的策略", "notes": "新备注", "tagIds": []},
+        )
+        self.assertEqual(updated["notes"], "新备注")
+
+        restarted = server.StrategyStore(self.strategy_store.path)
+        self.assertEqual(len(restarted.list_all()["strategies"]), 2)
+        restarted.delete_strategy(duplicate["id"])
+        self.assertEqual(
+            [item["name"] for item in restarted.list_all()["strategies"]],
+            ["更新后的策略"],
+        )
+
+    def test_strategy_config_defaults_and_persists_benchmark(self) -> None:
+        defaulted = self.create_strategy("默认基准策略")
+        self.assertEqual(defaulted["config"]["backtestMode"], "portfolio")
+        self.assertEqual(
+            defaulted["config"]["benchmarkId"],
+            server.DEFAULT_BENCHMARK_ID,
+        )
+
+        self.config["benchmarkId"] = "index:000688.SH"
+        custom = self.create_strategy("自定义基准策略")
+        self.assertEqual(custom["config"]["benchmarkId"], "index:000688.SH")
+        duplicated = self.strategy_store.duplicate_strategy(custom["id"], {})
+        self.assertEqual(
+            duplicated["config"]["benchmarkId"],
+            "index:000688.SH",
+        )
+
+    def test_strategy_config_persists_single_category_mode(self) -> None:
+        self.config["backtestMode"] = "single_category"
+        self.config["baskets"] = {
+            "equity": ["index:000300.SH", "index:000905.SH"],
+            "commodity": [],
+            "convertible": [],
+            "pure_bond": [],
+        }
+        strategy = self.create_strategy("单一类型策略")
+        self.assertEqual(strategy["config"]["backtestMode"], "single_category")
+        self.assertEqual(
+            strategy["config"]["baskets"]["equity"],
+            ["index:000300.SH", "index:000905.SH"],
+        )
+
+    def test_missing_benchmark_is_reported_without_counting_as_investment_asset(self) -> None:
+        strategy = self.create_strategy("失效基准策略")
+        original_count = strategy["assetCount"]
+        data = self.strategy_store._read_unlocked()
+        data["strategies"][0]["config"]["benchmarkId"] = "index:MISSING.BENCHMARK"
+        self.strategy_store._write_unlocked(data)
+
+        loaded = self.strategy_store.list_all()["strategies"][0]
+        self.assertEqual(
+            loaded["missingBenchmark"]["id"],
+            "index:MISSING.BENCHMARK",
+        )
+        self.assertEqual(loaded["assetCount"], original_count)
+
+    def test_three_level_tags_selection_and_parent_filter_paths(self) -> None:
+        root = self.strategy_store.create_tag({"name": "风格"})
+        child = self.strategy_store.create_tag(
+            {"name": "偏股", "parentId": root["id"]}
+        )
+        leaf = self.strategy_store.create_tag(
+            {"name": "高弹性", "parentId": child["id"]}
+        )
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.create_tag(
+                {"name": "第四级", "parentId": leaf["id"]}
+            )
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.create_tag(
+                {"name": "高弹性", "parentId": child["id"]}
+            )
+
+        strategy = self.create_strategy(
+            tag_ids=[root["id"], child["id"], leaf["id"]]
+        )
+        self.assertEqual(strategy["tagIds"], [leaf["id"]])
+        self.assertEqual(strategy["tagPaths"][0]["pathIds"], [
+            root["id"],
+            child["id"],
+            leaf["id"],
+        ])
+
+    def test_tag_move_cycle_deactivate_and_delete_guards(self) -> None:
+        root = self.strategy_store.create_tag({"name": "周期"})
+        child = self.strategy_store.create_tag(
+            {"name": "复苏", "parentId": root["id"]}
+        )
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.update_tag(
+                root["id"],
+                {"parentId": child["id"]},
+            )
+
+        inactive = self.strategy_store.update_tag(
+            child["id"],
+            {"active": False},
+        )
+        self.assertFalse(inactive["active"])
+        with self.assertRaises(server.ApiError):
+            self.create_strategy(tag_ids=[child["id"]])
+
+        self.strategy_store.update_tag(child["id"], {"active": True})
+        self.create_strategy(tag_ids=[child["id"]])
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.delete_tag(child["id"])
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.delete_tag(root["id"])
+
+    def test_corrupt_file_is_not_overwritten(self) -> None:
+        self.strategy_store.path.write_text("{broken", encoding="utf-8")
+        before = self.strategy_store.path.read_text(encoding="utf-8")
+        with self.assertRaises(server.ApiError):
+            self.strategy_store.create_tag({"name": "不会写入"})
+        self.assertEqual(
+            self.strategy_store.path.read_text(encoding="utf-8"),
+            before,
+        )
+
+    def test_rerun_updates_saved_summary_and_returns_result(self) -> None:
+        strategy = self.create_strategy()
+        result = {
+            "window": {"start": "2023-01-03", "end": "2024-12-31", "days": 480},
+            "metrics": [
+                {
+                    "totalReturn": 0.35,
+                    "annualReturn": 0.16,
+                    "maxDrawdown": -0.09,
+                    "sharpe": 1.35,
+                }
+            ],
+        }
+        with patch.object(server, "run_backtest", return_value=result):
+            rerun = self.strategy_store.rerun_strategy(strategy["id"])
+        self.assertEqual(rerun["result"], result)
+        self.assertEqual(rerun["strategy"]["summary"]["totalReturn"], 0.35)
+        self.assertEqual(
+            self.strategy_store.list_all()["strategies"][0]["summary"]["sharpe"],
+            1.35,
+        )
+
+    def test_missing_assets_are_reported_without_losing_snapshot(self) -> None:
+        strategy = self.create_strategy()
+        data = self.strategy_store._read_unlocked()
+        target = data["strategies"][0]
+        missing_id = "index:MISSING.TEST"
+        target["config"]["baskets"]["equity"].append(missing_id)
+        target["assetSnapshots"].append(
+            {
+                "id": missing_id,
+                "code": "MISSING.TEST",
+                "name": "失效测试标的",
+                "module": "index",
+                "category": "equity",
+            }
+        )
+        self.strategy_store._write_unlocked(data)
+        loaded = self.strategy_store.list_all()["strategies"][0]
+        self.assertEqual(loaded["id"], strategy["id"])
+        self.assertEqual(loaded["missingAssets"][0]["name"], "失效测试标的")
+
+
+def make_pring(rows: list[tuple[str, int]]) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "signal_date": pd.to_datetime([date for date, _ in rows]),
+            "state": [f"Stage {stage}" for _, stage in rows],
+            "stage": [stage for _, stage in rows],
+        }
+    )
+
+
+def fund_selection() -> dict[str, list[str]]:
+    return {
+        "equity": ["fund:510300.SH"],
+        "commodity": [
+            "fund:159980.SZ",
+            "fund:518880.SH",
+            "fund:159981.SZ",
+            "fund:159985.SZ",
+        ],
+        "convertible": ["fund:511380.SH"],
+        "pure_bond": ["fund:166016.SZ"],
+    }
+
+
+def make_kst(
+    index: pd.DatetimeIndex,
+    kst: float | None = None,
+    signal: float | None = None,
+    slope: float | None = None,
+) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "kst": [kst],
+            "signal": [signal],
+            "slope10": [slope],
+        },
+        index=index,
+        dtype=float,
+    )
+
+
+if __name__ == "__main__":
+    unittest.main()

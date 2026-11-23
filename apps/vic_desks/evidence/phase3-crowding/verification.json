@@ -1,0 +1,111 @@
+{
+  "health": {
+    "status": "ok",
+    "active_version": "a49acf3ac9d03625",
+    "cache_version": "a49acf3ac9d03625",
+    "calculation_version": "36145df3187b26ea",
+    "snapshot_origin": "frozen:a8bbbe0793ac426c",
+    "snapshot_fingerprint": "47d1f0adfcc79baa9d18",
+    "snapshot_build_count": 0,
+    "data_date": "2026-11-13",
+    "holding_period": "2026-06-30",
+    "auto_refresh": false,
+    "refresh_running": false,
+    "base_version": "a8bbbe0793ac426c",
+    "fund_scale_period": "2026-09-30"
+  },
+  "start_checks": {
+    "hp": {
+      "baseline": "2026-06-30",
+      "fund_005844_ret_pct": -43.152741212877,
+      "fund_005844_start": "2026-06-30",
+      "held_300308_return_pct": -63.23472145739313,
+      "held_300308_score": 73.2,
+      "unheld_000010_list_detail_return_pct": -38.23529411764706,
+      "300308_factors": {
+        "crowding": 96.41449960598896,
+        "liquidity": null,
+        "adding": 6.319554848966614,
+        "price": null,
+        "money": 93.61607142857143
+      }
+    },
+    "qe": {
+      "baseline": "2026-09-30",
+      "fund_005844_ret_pct": -21.309379195703603,
+      "fund_005844_start": "2026-09-30",
+      "held_300308_return_pct": -42.24444145624817,
+      "held_300308_score": 73.2,
+      "unheld_000010_list_detail_return_pct": -27.083333333333325,
+      "300308_factors": {
+        "crowding": 96.41449960598896,
+        "liquidity": null,
+        "adding": 6.319554848966614,
+        "price": null,
+        "money": 93.61607142857143
+      }
+    },
+    "d5": {
+      "baseline": "2026-11-06",
+      "fund_005844_ret_pct": 1.6895939191142961,
+      "fund_005844_start": "2026-11-06",
+      "held_300308_return_pct": 4.062499999999991,
+      "held_300308_score": 73.2,
+      "unheld_000010_list_detail_return_pct": -3.669724770642213,
+      "300308_factors": {
+        "crowding": 96.41449960598896,
+        "liquidity": null,
+        "adding": 6.319554848966614,
+        "price": null,
+        "money": 93.61607142857143
+      }
+    },
+    "d20": {
+      "baseline": "2026-10-16",
+      "fund_005844_ret_pct": -16.868731214751286,
+      "fund_005844_start": "2026-10-16",
+      "held_300308_return_pct": -30.417910447761187,
+      "held_300308_score": 73.2,
+      "unheld_000010_list_detail_return_pct": -21.641791044776127,
+      "300308_factors": {
+        "crowding": 96.41449960598896,
+        "liquidity": null,
+        "adding": 6.319554848966614,
+        "price": null,
+        "money": 93.61607142857143
+      }
+    }
+  },
+  "index_sections": [
+    "as_of",
+    "latest",
+    "building",
+    "periods",
+    "kpis",
+    "series",
+    "industries",
+    "focus",
+    "top_stocks",
+    "ref_marks",
+    "note",
+    "marks",
+    "quality",
+    "sources",
+    "coverage",
+    "data_version"
+  ],
+  "rank_eligible": 0,
+  "wrong_version_http": 409,
+  "reused_scale_reports": 2,
+  "candidate_fund_coverage": {
+    "observed_non_pit": 50
+  },
+  "portability": {
+    "only_candidate_manifest_copied": true,
+    "external_lake_env_removed": true,
+    "invalid_version_fails_startup": true,
+    "default_version": "a8bbbe0793ac426c",
+    "candidate_version": "a49acf3ac9d03625",
+    "port_available_after_test": 19232
+  }
+}

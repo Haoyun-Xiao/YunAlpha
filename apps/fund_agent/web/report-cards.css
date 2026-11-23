@@ -1,0 +1,95 @@
+.report-message > div {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.report-card-shell .report-card {
+  box-shadow: 0 10px 32px #1a2c4912;
+}
+
+.job-id {
+  display: block;
+  margin-top: 5px;
+  color: #8b95a9;
+  font: 9px ui-monospace, monospace;
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.report-card .report-actions a,
+.report-actions button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin: 0;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: white;
+  color: #42516e;
+  font-size: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.report-card .report-actions .primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+.report-actions button.danger {
+  color: #9f3d49;
+  border-color: #efcbd0;
+}
+
+.report-error {
+  padding: 9px;
+  color: #9f3d49;
+  background: #fff0f2;
+  font-size: 10px;
+}
+
+.model-live-progress {
+  margin-top: 12px;
+  padding: 10px 11px;
+  border: 1px solid #d9e4f4;
+  border-radius: 9px;
+  background: #f6f9fe;
+}
+
+.model-live-progress header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #48668e;
+  font-size: 10px;
+}
+
+.model-live-progress p {
+  margin: 7px 0;
+  color: #243b5c;
+  font: 11px ui-monospace, monospace;
+}
+
+.model-live-progress dl {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.status-completed,
+.status-completed_with_warnings {
+  color: #18845d !important;
+}
+
+.status-failed,
+.status-failed_validation {
+  color: #a33e4b !important;
+}

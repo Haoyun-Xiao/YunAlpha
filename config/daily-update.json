@@ -1,0 +1,52 @@
+{
+  "lake_repo": "/path/to/local-user/\u9879\u76ee/\u591a\u8d44\u4ea7\u667a\u80fd\u6295\u7814\u5e73\u53f0-v2",
+  "lake_config": "configs/multi-asset-lake.toml",
+  "dsh": "/path/to/local-user/.npm-global/bin/dsh",
+  "opencodex": "/path/to/local-user/.npm-global/bin/opencodex",
+  "opencodex_url": "http://127.0.0.1:10100",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "lake_groups": [
+    "core",
+    "capital",
+    "signals",
+    "fundamentals",
+    "macro_risk",
+    "research",
+    "news",
+    "convertibles",
+    "tushare"
+  ],
+  "after_desks_groups": [
+    "sentiment"
+  ],
+  "unscheduled_groups": [
+    "intraday",
+    "ticks"
+  ],
+  "desk_inputs_extra": {
+    "curated": [
+      "cross_border_daily_stats",
+      "cross_border_top_trades",
+      "dragon_tiger",
+      "dragon_tiger_seat_observations",
+      "financial_statement_items",
+      "index_constituents",
+      "index_valuation_metrics",
+      "macro_indicators",
+      "margin_exchange_daily",
+      "moneyflow_cnt_ths",
+      "moneyflow_ind_ths",
+      "price_limits",
+      "sector_fund_flow",
+      "sector_members",
+      "stock_daily_research_inputs",
+      "stock_financial_ttm_events",
+      "stock_moneyflow_ths",
+      "sw_daily"
+    ],
+    "derived": [
+      "dividend_cash",
+      "seven_priority_indicators"
+    ]
+  }
+}

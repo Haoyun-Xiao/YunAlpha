@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "baseline": "df34eb4330062fe470051667f1730f418d771a7e",
+  "checks": [
+    "two actual task trees created from committed main",
+    "source changes isolated from main and second tree",
+    "dirty retirement refused",
+    "state and config isolated",
+    "repeated init preserves local config",
+    "both environment checks passed",
+    "runtime artifacts archived with SHA256",
+    "both trees removed; branches retained",
+    "only main worktree remains"
+  ],
+  "services_started": false,
+  "lake_writes": false,
+  "archive": "/path/to/local-user/项目/.workspace-archive/2026-11-06/worktree-retired"
+}

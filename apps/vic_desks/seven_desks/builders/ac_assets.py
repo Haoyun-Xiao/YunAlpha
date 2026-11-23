@@ -1,0 +1,21 @@
+from seven_desks.settings import CACHE as BUILD_ROOT, LAKE, SOURCE as REVIEW_SOURCE, FROZEN_VERSION
+from seven_desks.store import version_root, connect
+"""Rebuild prior-holdings returns and quarantine unverified asset denominators."""
+from pathlib import Path
+import duckdb,json
+P=Path(__file__).resolve().parents[2]; O=(BUILD_ROOT / 'ac-fix'); L=(BUILD_ROOT / 'owners'); S=(REVIEW_SOURCE / 'owners')
+c=connect(config={'threads':2,'memory_limit':'4GB'})
+def emit(n,sql):
+ c.execute(f"COPY ({sql}) TO '{O/n}.parquet' (FORMAT PARQUET,COMPRESSION ZSTD)")
+ print(n,flush=True)
+emit('company_implied_halfyear_return',f"""WITH periods AS(SELECT DISTINCT company_id,report_period FROM '{O}/company_stock_holdings.parquet' WHERE month(report_period) IN(6,12)),legs AS(SELECT p.company_id,p.report_period,h.symbol,h.market_value previous_market_value,CASE WHEN h.adjusted_close>0 THEN b.adjusted_close/h.adjusted_close-1 END implied_return FROM periods p JOIN '{O}/company_stock_holdings.parquet' h ON h.company_id=p.company_id AND h.report_period=last_day(p.report_period-INTERVAL '6 months') LEFT JOIN '{S}/period_stock_context.parquet' b ON b.symbol=h.symbol AND b.report_period=p.report_period) SELECT company_id,report_period,sum(previous_market_value*implied_return)/nullif(sum(previous_market_value) FILTER(WHERE implied_return IS NOT NULL),0) implied_return,count(implied_return)*1.0/count(*) price_coverage,sum(previous_market_value) FILTER(WHERE implied_return IS NOT NULL)/nullif(sum(previous_market_value),0) weight_coverage,count(*) stock_count,'prior_visible_holdings_buy_hold_estimate_not_realized_trades;verified_ac_dedup_in_known_periods' quality_status FROM legs GROUP BY ALL""")
+emit('company_asset_snapshot',f"""WITH affected AS(SELECT DISTINCT p.company_id,c.report_period FROM '{O}/fund_share_period_coverage.parquet' c JOIN '{S}/active_fund_universe.parquet' p ON p.symbol=c.fund_symbol WHERE c.ac_coverage='verified_identical_portfolio'),x AS(SELECT a.*,b.company_id IS NOT NULL affected FROM '{L}/company_asset_snapshot.parquet' a LEFT JOIN affected b USING(company_id,report_period)) SELECT * EXCLUDE(affected) REPLACE(CASE WHEN affected THEN NULL ELSE net_assets END AS net_assets, CASE WHEN affected THEN NULL ELSE reported_stock_market_value END AS reported_stock_market_value,CASE WHEN affected THEN NULL ELSE stock_allocation END AS stock_allocation),CASE WHEN affected THEN 'unknown_share_class_asset_scope' ELSE 'no_verified_duplicate_detected_asset_scope_not_independently_verified' END asset_denominator_status FROM x""")
+# One reproducible sample proving that the raw asset source does not itself
+# establish whether the value is a class amount or the entire shared product.
+lake=S.parents[3]; asset=lake/'curated/fund_asset_allocation_snapshot/**/*.parquet'
+sample=c.execute(f"""SELECT symbol,share_nav,stock_market_value,stock_nav_ratio_pct,source,report_announce_date FROM read_parquet('{asset}',hive_partitioning=false,union_by_name=true) WHERE symbol IN ('012297.OF','012298.OF') AND report_period=DATE '2025-12-31' QUALIFY row_number() OVER(PARTITION BY symbol,report_period ORDER BY fetched_at DESC)=1 ORDER BY symbol""").fetchall()
+assert len(sample)==2 and sample[0][1:5]==sample[1][1:5] and sample[0][1]==36000000
+rows=c.execute(f"""SELECT count(*) FILTER(WHERE asset_denominator_status='unknown_share_class_asset_scope'),count(*) FILTER(WHERE asset_denominator_status='unknown_share_class_asset_scope' AND (net_assets IS NOT NULL OR reported_stock_market_value IS NOT NULL OR stock_allocation IS NOT NULL)) FROM '{O}/company_asset_snapshot.parquet'""").fetchone();assert rows[1]==0
+old=c.execute(f"DESCRIBE SELECT * FROM '{S}/company_implied_halfyear_return.parquet'").fetchall();new=c.execute(f"DESCRIBE SELECT * FROM '{O}/company_implied_halfyear_return.parquet'").fetchall();assert [(x[0],x[1]) for x in old]==[(x[0],x[1]) for x in new]
+(O/'asset_validation.json').write_text(json.dumps({'sample_2025Q4':sample,'asset_source_interpretation':'eastmoney.f10_zcpz supplies equal class observations but no evidence of class-specific versus product-wide scope; no deduplication inferred','affected_company_periods':rows[0],'invalid_nonnull_affected':rows[1],'implied_return_schema_matches_source':True},ensure_ascii=False,indent=2,default=str))
+print('affected_company_periods',rows[0],flush=True)

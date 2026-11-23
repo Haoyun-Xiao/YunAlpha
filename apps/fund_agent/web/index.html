@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="本地只读基金研究 Agent 实验平台">
+  <title>FundScope / 基金研究 Agent</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101a31'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial' font-size='24' font-weight='700' fill='white'%3EFS%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css?v=20260829-session-isolation">
+  <link rel="stylesheet" href="./deep-agent.css?v=20260830-chat-grid-fix">
+  <link rel="stylesheet" href="./report-cards.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">FS</span><div><strong>FundScope</strong><small>RESEARCH AGENT LAB</small></div></div>
+    <div class="boundary"><i></i> 只读研究边界 <span>NO TRADING</span></div>
+    <button id="healthButton" class="ghost-button">依赖检查</button>
+  </header>
+  <main class="desk">
+    <aside class="sessions-panel">
+      <div class="panel-heading"><div><span class="eyebrow">WORKSPACE</span><h2>研究会话</h2></div><button id="newSession" class="icon-button" title="新会话">＋</button></div>
+      <div id="sessionList" class="session-list"></div>
+      <section class="quick-report">
+        <span class="eyebrow">DURABLE WORKFLOW</span>
+        <h3>深度报告任务</h3>
+        <label>基金代码<input id="reportFund" value="000628.OF" maxlength="9"></label>
+        <label>截至日期<input id="reportDate" type="date"></label>
+        <label>网页模式<select id="webMode"><option value="replay">Replay</option><option value="auto">Auto</option><option value="live">Live</option><option value="off">Off</option></select></label>
+        <button id="createReport" class="primary-button">创建后台任务</button>
+      </section>
+    </aside>
+
+    <section class="conversation-panel">
+      <div class="conversation-header">
+        <div><span class="eyebrow">CURRENT RESEARCH</span><h1 id="sessionTitle">选择或创建会话</h1></div>
+        <div id="runStatus" class="run-status">IDLE</div>
+      </div>
+      <div id="messages" class="messages">
+        <article class="welcome-card">
+          <span class="index">00</span><div><h2>从问题到证据，而不是从提示词到答案。</h2><p>Deep Agents 负责多轮研究、Skills、Todo 和受限专家，完整报告交给可恢复 Workflow。所有业务调用经过只读 Tool Gateway，所有写入只落在新项目的 <code>var/</code>。</p></div>
+        </article>
+      </div>
+      <form id="chatForm" class="composer">
+        <textarea id="chatInput" rows="2" placeholder="例如：比较大成高鑫A与景顺长城成长之星的收益来源、风险和经理风格，并给出证据。"></textarea>
+        <div class="composer-footer"><span>Enter 发送 · Shift+Enter 换行</span><button class="send-button" type="submit">运行研究 <b>↗</b></button></div>
+      </form>
+    </section>
+
+    <aside class="inspector-panel">
+      <div class="panel-heading"><div><span class="eyebrow">LIVE INSPECTOR</span><h2>执行剖面</h2></div><span id="eventCount" class="event-count">0 EVENTS</span></div>
+      <nav class="tabs" id="tabs">
+        <button class="active" data-tab="trace">Trace</button><button data-tab="route">决策 / 上下文</button><button data-tab="report">Report</button><button data-tab="memory">Memory</button>
+      </nav>
+      <section id="traceTab" class="tab-view active"><div id="traceRail" class="trace-rail"><p class="empty">等待一次 Agent Run。</p></div></section>
+      <section id="routeTab" class="tab-view">
+        <div class="agent-inspector-summary">
+          <section><span class="eyebrow">ACTIVE CONTEXT</span><div id="contextSummary" class="inspector-stack"><p class="empty">尚未加载会话上下文</p></div></section>
+          <section><span class="eyebrow">TODO</span><div id="todoSummary" class="inspector-stack"><p class="empty">当前没有研究计划</p></div></section>
+          <section><span class="eyebrow">EXPERTS & SKILLS</span><div id="expertSummary" class="inspector-stack"><p class="empty">尚未调用专家或 Skill</p></div></section>
+          <section><span class="eyebrow">LATEST EVENT</span><pre id="routeView">尚无 Agent 决策与上下文</pre></section>
+        </div>
+      </section>
+      <section id="reportTab" class="tab-view"><div id="reportView"><p class="empty">尚无报告任务</p></div></section>
+      <section id="memoryTab" class="tab-view"><div class="memory-form"><select id="memoryKind"><option value="preference">偏好</option><option value="convention">研究口径</option><option value="project_fact">项目约定</option><option value="episodic_summary">任务经验</option></select><input id="memoryContent" placeholder="显式写入一条长期记忆"><button id="saveMemory">保存</button></div><div id="memoryList"></div></section>
+    </aside>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./app.js?v=20260830-markdown"></script>
+</body>
+</html>

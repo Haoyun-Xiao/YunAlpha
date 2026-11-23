@@ -1,0 +1,10 @@
+{
+  "seven_desks/__init__.py": "6e25ca2121df37b3067c1d34fba72afe91b5a9a3db9b9c1b9c586cfe9b72a69b",
+  "seven_desks/settings.py": "5ef2a224a4d1b2c7700dda9268fb892b55603b0bbf9c7138bd23b3b1283b116b",
+  "seven_desks/store.py": "e659894cbaf03e12005f0cf687b448362b291c1ccfdf3e2281cc938d9c5c0134",
+  "seven_desks/server.py": "e923ddb2a65260b4de19cfd949dc38e40cc810dbff2d28458b2bb6c488d9976a",
+  "seven_desks/adapters/__init__.py": "f467a521292b99ee8c359af3b442b92bf9bfe0f82ccf77e27e6faf240954f037",
+  "seven_desks/adapters/contrarian.py": "4d839020dceead289c039d67ccc33289aa70840eed8f790e125dc76cfd87c41c",
+  "seven_desks/adapters/market.py": "f3ec27e7a8debce4159a1a95e7fbfa3c4b3bbd7773584d386da9422a6cf6f451",
+  "seven_desks/adapters/owners.py": "7f83de6c601c6ca87a65c96225d96330210a262df39acd960489c34854c2916f"
+}

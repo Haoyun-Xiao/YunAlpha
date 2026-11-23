@@ -1,0 +1,24 @@
+version = 1
+name = "综合投研平台"
+
+[setup]
+script = """
+./scripts/workspace.sh init
+./scripts/workspace.sh setup
+./scripts/workspace.sh check
+"""
+
+[[actions]]
+name = "启动环境"
+icon = "run"
+command = "./scripts/workspace.sh start"
+
+[[actions]]
+name = "停止环境"
+icon = "terminal"
+command = "./scripts/workspace.sh stop"
+
+[[actions]]
+name = "检查环境"
+icon = "test"
+command = "./scripts/workspace.sh check"

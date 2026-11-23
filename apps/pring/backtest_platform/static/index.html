@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>中宏观投研平台 · 组合回测</title>
+    <link rel="stylesheet" href="styles.css?v=20260622-1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-main">
+        <div>
+          <p class="eyebrow">中宏观投研平台</p>
+          <h1>中宏观投研平台 · 组合回测</h1>
+        </div>
+        <div class="top-actions">
+          <button id="saveStrategyBtn" class="ghost-btn workspace-only" type="button" disabled>保存策略</button>
+          <button id="strategyLibraryBtn" class="ghost-btn" type="button">策略库</button>
+          <button id="workspaceNavBtn" class="ghost-btn library-only hidden" type="button">返回工作台</button>
+          <button id="clearBtn" class="ghost-btn danger-btn workspace-only" type="button">清空篮子</button>
+          <button id="resetBtn" class="ghost-btn workspace-only" type="button">恢复默认</button>
+          <button id="runBtn" class="primary-btn workspace-only" type="button">运行回测</button>
+        </div>
+      </div>
+
+      <section class="settings-bar workspace-only" aria-label="回测设置">
+        <div class="settings-heading">
+          <span>回测设置</span>
+          <small>基准、风控与资产倾向</small>
+        </div>
+        <div class="benchmark-control">
+          <span class="control-title">对照基准</span>
+          <button id="benchmarkBtn" class="benchmark-btn" type="button">
+            <span id="benchmarkName">沪深300</span>
+            <small id="benchmarkCode">000300.SH · 指数</small>
+          </button>
+        </div>
+        <div class="control-group mode-control" aria-label="回测模式">
+          <span class="control-title">回测模式</span>
+          <label class="toggle mode-toggle">
+            <input id="singleCategoryToggle" type="checkbox" />
+            <span></span>
+            单一类型资产
+          </label>
+        </div>
+        <div class="control-group" aria-label="MA20 + KST 风控设置">
+          <span class="control-title">MA20 + KST 风控</span>
+          <label class="check-pill">
+            <input id="ma20Equity" type="checkbox" />
+            <span>股票优势</span>
+          </label>
+          <label class="check-pill">
+            <input id="ma20Commodity" type="checkbox" />
+            <span>商品优势</span>
+          </label>
+        </div>
+        <div class="stage-control-stack">
+          <button id="stageSettingsBtn" class="ghost-btn" type="button">Stage 比例</button>
+          <div class="stage-tilt-control" aria-label="股债倾向">
+            <div id="stageProfileSwitch" class="stage-tilt-track"></div>
+            <div class="stage-tilt-labels" aria-hidden="true">
+              <span>偏债</span>
+              <span>均衡</span>
+              <span>偏股</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </header>
+
+    <main id="workspaceView" class="shell">
+      <aside class="library-panel">
+        <div class="panel-head">
+          <div>
+            <h2>资产库</h2>
+            <p id="assetCount">正在加载资产...</p>
+          </div>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab" data-tab="fund" type="button">基金</button>
+          <button class="tab" data-tab="manager" type="button">基金经理</button>
+          <button class="tab active" data-tab="index" type="button">指数</button>
+          <button class="tab" data-tab="enhanced" type="button">增强</button>
+        </div>
+        <input id="searchInput" class="search" type="search" placeholder="搜索代码或名称" />
+        <div id="assetList" class="asset-list"></div>
+      </aside>
+
+      <section class="workspace">
+        <section class="basket-grid" aria-label="回测资产篮子">
+          <div class="basket" data-basket="equity">
+            <div class="basket-head">
+              <h2>股票</h2>
+              <span class="badge red">等权</span>
+            </div>
+            <div class="dropzone" data-basket="equity"></div>
+          </div>
+          <div class="basket" data-basket="commodity">
+            <div class="basket-head">
+              <h2>商品</h2>
+              <span class="badge gold">等权</span>
+            </div>
+            <div class="dropzone" data-basket="commodity"></div>
+          </div>
+          <div class="basket" data-basket="convertible">
+            <div class="basket-head">
+              <h2>可转债</h2>
+              <span class="badge violet">等权</span>
+            </div>
+            <div class="dropzone" data-basket="convertible"></div>
+          </div>
+          <div class="basket" data-basket="pure_bond">
+            <div class="basket-head">
+              <h2>纯债</h2>
+              <span class="badge blue">水库</span>
+            </div>
+            <div class="dropzone" data-basket="pure_bond"></div>
+          </div>
+        </section>
+
+        <section class="date-panel">
+          <div class="date-panel-head">
+            <h2>回测区间</h2>
+            <span id="dateRangeHint">根据当前篮子计算共同区间</span>
+          </div>
+          <div class="date-fields">
+            <label>
+              <span>开始日期</span>
+              <input id="startDate" type="date" />
+            </label>
+            <label>
+              <span>结束日期</span>
+              <input id="endDate" type="date" />
+            </label>
+          </div>
+        </section>
+
+        <section class="splice-panel" id="splicePanel">
+          <div class="splice-head">
+            <label class="toggle">
+              <input id="spliceToggle" type="checkbox" />
+              <span></span>
+              开启模拟拼接
+            </label>
+            <p>开启后，基金共同首日前全部使用下方指数池；基金共同首日起全部切回上方基金篮子。</p>
+          </div>
+          <div class="splice-pool hidden" id="splicePool">
+            <div class="splice-basket" data-splice-basket="equity">
+              <div class="splice-title"><h3>股票指数</h3><span>前段</span></div>
+              <div class="splice-dropzone" data-splice-basket="equity"></div>
+            </div>
+            <div class="splice-basket" data-splice-basket="commodity">
+              <div class="splice-title"><h3>商品指数</h3><span>前段</span></div>
+              <div class="splice-dropzone" data-splice-basket="commodity"></div>
+            </div>
+            <div class="splice-basket" data-splice-basket="convertible">
+              <div class="splice-title"><h3>可转债指数</h3><span>前段</span></div>
+              <div class="splice-dropzone" data-splice-basket="convertible"></div>
+            </div>
+            <div class="splice-basket" data-splice-basket="pure_bond">
+              <div class="splice-title"><h3>纯债指数</h3><span>前段</span></div>
+              <div class="splice-dropzone" data-splice-basket="pure_bond"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="status" class="status">拖动左侧标的到四类资产篮子后运行回测。</section>
+
+        <section id="results" class="results hidden">
+          <div class="result-head">
+            <div>
+              <h2>回测结果</h2>
+              <p id="windowText"></p>
+            </div>
+          </div>
+
+          <div id="metrics" class="metrics"></div>
+
+          <div class="chart-grid">
+            <article class="chart-card wide">
+              <div class="chart-title">
+                <h3>净值曲线</h3>
+                <span id="navChartSubtitle">策略 / 理论无风控 / 沪深300</span>
+              </div>
+              <canvas id="navChart" height="280"></canvas>
+            </article>
+            <article class="chart-card wide">
+              <div class="chart-title">
+                <h3>回撤水下图</h3>
+                <span>每日距离历史高点</span>
+              </div>
+              <canvas id="drawdownChart" height="250"></canvas>
+            </article>
+            <article id="weightChartCard" class="chart-card wide">
+              <div class="chart-title">
+                <h3>仓位分布</h3>
+                <span id="weightChartSubtitle">MA20 + KST 仓位调整后的真实持仓</span>
+              </div>
+              <canvas id="weightChart" height="250"></canvas>
+            </article>
+            <article id="annualReturnChartCard" class="chart-card wide">
+              <div class="chart-title">
+                <h3>年度收益大比拼</h3>
+                <span id="annualReturnSubtitle">策略 vs 沪深300</span>
+              </div>
+              <canvas id="annualReturnChart" height="270"></canvas>
+            </article>
+            <article id="annualContributionChartCard" class="chart-card wide">
+              <div class="chart-title">
+                <h3>年度贡献拆解</h3>
+                <span id="annualContributionSubtitle">四类资产驱动力 vs 沪深300</span>
+              </div>
+              <canvas id="annualContributionChart" height="270"></canvas>
+            </article>
+            <article id="contributionChartCard" class="chart-card wide">
+              <div class="chart-title">
+                <h3>累计绝对拉动点数</h3>
+                <span>四大核心资产已分配复利堆叠</span>
+              </div>
+              <canvas id="contributionChart" height="280"></canvas>
+            </article>
+          </div>
+
+          <div class="table-grid">
+            <article id="stageAttributionCard" class="table-card wide">
+              <div class="table-title">
+                <div class="table-title-copy">
+                  <h3>阶段资产表现归因</h3>
+                  <span id="stageAttributionHint">连续相同 Stage 合并；贡献点按每日真实持仓计算</span>
+                </div>
+                <div class="segmented-control" aria-label="归因拆解方式">
+                  <button class="active" type="button" data-attribution-mode="stage">按 Stage</button>
+                  <button type="button" data-attribution-mode="year">按年份</button>
+                </div>
+              </div>
+              <div id="stageAttributionTable" class="table-wrap stage-attribution-wrap"></div>
+            </article>
+            <article id="annualTableCard" class="table-card">
+              <h3 id="annualTableTitle">年度归因</h3>
+              <div id="annualTable" class="table-wrap"></div>
+            </article>
+            <article id="efficiencyCard" class="table-card">
+              <h3>资金效率</h3>
+              <div id="efficiencyTable" class="table-wrap"></div>
+            </article>
+            <article id="tradeCard" class="table-card wide">
+              <h3>最近调仓日志</h3>
+              <div id="tradeTable" class="table-wrap"></div>
+            </article>
+            <article id="riskCard" class="table-card wide">
+              <h3>MA20 + KST 风控诊断</h3>
+              <div id="riskTable" class="table-wrap"></div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div id="benchmarkModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="benchmarkModalTitle">
+      <section class="modal-dialog benchmark-modal-dialog">
+        <header class="modal-head">
+          <div>
+            <h2 id="benchmarkModalTitle">选择对照基准</h2>
+            <p class="modal-subtitle">资产库中的任意标的都可以作为回测对照。</p>
+          </div>
+          <button id="closeBenchmarkModalBtn" class="icon-btn" type="button" title="关闭" aria-label="关闭">×</button>
+        </header>
+        <div class="benchmark-toolbar">
+          <input id="benchmarkSearchInput" class="search" type="search" placeholder="搜索名称、代码、经理或标签" />
+          <select id="benchmarkModuleFilter" class="select-control" aria-label="基准资产类型">
+            <option value="">全部类型</option>
+            <option value="fund">基金</option>
+            <option value="manager">基金经理</option>
+            <option value="index">指数</option>
+            <option value="enhanced">增强</option>
+          </select>
+        </div>
+        <div id="benchmarkList" class="benchmark-list"></div>
+      </section>
+    </div>
+
+    <main id="strategyLibraryView" class="strategy-library-view hidden">
+      <section class="strategy-library-head">
+        <div>
+          <p class="eyebrow">Saved Strategies</p>
+          <h2>策略库</h2>
+          <p id="strategyLibraryCount" class="muted-copy">正在读取已保存策略...</p>
+        </div>
+        <button id="tagManagerBtn" class="ghost-btn" type="button">标签管理</button>
+      </section>
+      <section class="strategy-toolbar">
+        <input id="strategySearchInput" class="search" type="search" placeholder="搜索策略名、标签或备注" />
+        <div id="strategyTagFilter" class="strategy-filter-tree" aria-label="按标签筛选策略"></div>
+      </section>
+      <section id="strategyCards" class="strategy-card-grid"></section>
+    </main>
+
+    <div id="stageSettingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="stageSettingsTitle">
+      <section class="modal-dialog">
+        <header class="modal-head">
+          <h2 id="stageSettingsTitle">Stage 资产比例</h2>
+          <button id="closeStageSettingsBtn" class="icon-btn" type="button" title="关闭" aria-label="关闭">×</button>
+        </header>
+        <div class="stage-weight-wrap">
+          <table class="stage-weight-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>优势资产</th>
+                <th>股票</th>
+                <th>商品</th>
+                <th>可转债</th>
+                <th>纯债</th>
+                <th>合计</th>
+              </tr>
+            </thead>
+            <tbody id="stageWeightRows"></tbody>
+          </table>
+        </div>
+        <footer class="modal-actions">
+          <span id="stageWeightStatus"></span>
+          <button id="resetStageWeightsBtn" class="ghost-btn" type="button">恢复默认比例</button>
+          <button id="cancelStageSettingsBtn" class="ghost-btn" type="button">取消</button>
+          <button id="applyStageSettingsBtn" class="primary-btn" type="button">应用</button>
+        </footer>
+      </section>
+    </div>
+
+    <div id="strategyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="strategyModalTitle">
+      <section class="modal-dialog strategy-modal-dialog">
+        <header class="modal-head">
+          <div>
+            <h2 id="strategyModalTitle">保存策略</h2>
+            <p id="strategyModalHint" class="modal-subtitle"></p>
+          </div>
+          <button id="closeStrategyModalBtn" class="icon-btn" type="button" title="关闭" aria-label="关闭">×</button>
+        </header>
+        <div class="form-stack">
+          <label class="field-label">
+            <span>策略名</span>
+            <input id="strategyNameInput" class="text-control" type="text" maxlength="120" />
+          </label>
+          <div class="field-label">
+            <span>特征标签（最多三级，可选多条路径）</span>
+            <div id="strategyTagSelector" class="tag-selector"></div>
+          </div>
+          <label class="field-label">
+            <span>备注</span>
+            <textarea id="strategyNotesInput" class="text-control" maxlength="2000" rows="6" placeholder="记录策略思路、适用场景或后续观察事项"></textarea>
+            <small id="strategyNotesCount">0 / 2000</small>
+          </label>
+          <p id="strategyFormError" class="form-error"></p>
+        </div>
+        <footer class="modal-actions">
+          <button id="cancelStrategyModalBtn" class="ghost-btn" type="button">取消</button>
+          <button id="saveAsStrategyBtn" class="ghost-btn" type="button">另存为新策略</button>
+          <button id="submitStrategyBtn" class="primary-btn" type="button">保存</button>
+        </footer>
+      </section>
+    </div>
+
+    <div id="tagManagerModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tagManagerTitle">
+      <section class="modal-dialog tag-manager-dialog">
+        <header class="modal-head">
+          <div>
+            <h2 id="tagManagerTitle">标签管理</h2>
+            <p class="modal-subtitle">维护全局三级标签树；停用后历史策略仍会保留标签。</p>
+          </div>
+          <button id="closeTagManagerBtn" class="icon-btn" type="button" title="关闭" aria-label="关闭">×</button>
+        </header>
+        <div class="tag-manager-layout">
+          <div>
+            <div id="tagManagerTree" class="tag-manager-tree"></div>
+            <button id="addRootTagBtn" class="ghost-btn" type="button">新增一级标签</button>
+          </div>
+          <form id="tagEditorForm" class="tag-editor hidden">
+            <input id="tagEditorId" type="hidden" />
+            <label class="field-label">
+              <span>标签名称</span>
+              <input id="tagNameInput" class="text-control" type="text" maxlength="60" required />
+            </label>
+            <label class="field-label">
+              <span>上级标签</span>
+              <select id="tagParentSelect" class="select-control"></select>
+            </label>
+            <label id="tagActiveRow" class="check-pill">
+              <input id="tagActiveInput" type="checkbox" checked />
+              <span>允许用于新策略</span>
+            </label>
+            <p id="tagEditorError" class="form-error"></p>
+            <div class="tag-editor-actions">
+              <button id="deleteTagBtn" class="ghost-btn danger-btn" type="button">彻底删除</button>
+              <button class="primary-btn" type="submit">保存标签</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js?v=20260622-2"></script>
+  </body>
+</html>

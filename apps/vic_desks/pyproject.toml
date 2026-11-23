@@ -1,0 +1,14 @@
+[project]
+name = "yunalpha-vic-desks"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "duckdb==1.5.4",
+    "numpy==2.4.6",
+    "pyarrow==25.0.0",
+    "pandas==3.0.3",
+    "pytz==2026.6",
+]
+
+[dependency-groups]
+dev = ["pytest>=9,<10"]

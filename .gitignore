@@ -1,0 +1,15 @@
+config/local.json
+.runtime/
+.venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+.env
+.env.*
+*.pem
+*.key
+
+apps/web/dist/
+apps/fund_agent/src/*.egg-info/

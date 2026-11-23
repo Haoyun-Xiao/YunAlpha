@@ -1,0 +1,87 @@
+{
+  "frozen_input": {
+    "version": "a8bbbe0793ac426c",
+    "files": 11193,
+    "bytes": 298102246,
+    "sha256sums_sha256": "90a725114c63b90351c06e8b7782a1a977f3620a7e4278b47087c551cfa3a63b",
+    "verified_again_after_http": true
+  },
+  "api": {
+    "version": "a8bbbe0793ac426c",
+    "stock_sample": [
+      "000001.SZ",
+      "300308.SZ",
+      "300502.SZ",
+      "603061.SH",
+      "300483.SZ",
+      "688796.SH",
+      "301362.SZ",
+      "688785.SH",
+      "600105.SH",
+      "301511.SZ",
+      "300570.SZ",
+      "000006.SZ",
+      "000007.SZ",
+      "301013.SZ",
+      "603186.SH",
+      "301526.SZ",
+      "600601.SH",
+      "600328.SH",
+      "002813.SZ",
+      "600479.SH"
+    ],
+    "page_p95_ms": 35.9,
+    "detail_first_key_p95_ms": 2.06,
+    "detail_warm_p95_ms": 1.66,
+    "first_process_detail_ms": 62.758,
+    "detail_first_key_max_ms": 4.159,
+    "page_target_passed": true,
+    "detail_target_passed": true,
+    "snapshot_builds_before": 0,
+    "snapshot_builds_after": 0,
+    "checks": [
+      "pinned versions",
+      "four starts",
+      "five repeated rounds",
+      "20 stratified first-key details",
+      "unheld search/detail",
+      "empty search",
+      "409 invalid version",
+      "26 fields asc/desc sorting",
+      "seven views",
+      "no full snapshot rebuild"
+    ],
+    "cold_definition": "fresh per-stock detail key in this acceptance; shared market/holder inputs precomputed, API and first request may have loaded them",
+    "prefix_stripped_responses_match": true,
+    "missing_input_rejected": true,
+    "runtime_lake_configured": false
+  },
+  "browser": {
+    "entry": "/workspaces/crowding/",
+    "browser": "in-app browser",
+    "tabs": [
+      "抱团总览",
+      "个股拥挤度",
+      "个股透视",
+      "基金与资金",
+      "行业与仓位",
+      "抱团指数"
+    ],
+    "checks": [
+      "切换近 20 日，保留 start=d20 和冻结版本",
+      "风险分由降序切换升序；搜索 000001 + 全部公募持仓筛出一行",
+      "从结果下钻至平安银行，股价与融资余额图显示，图例开关有效",
+      "数据说明显示行情日、持仓期、完整版本与覆盖",
+      "静态资源在 /workspaces/crowding/ 下加载"
+    ],
+    "detail": {
+      "code": "000001.SZ",
+      "name": "平安银行",
+      "holders": 30,
+      "companies": 10,
+      "price_points": 93
+    },
+    "console_errors": 0,
+    "console_warnings": 0
+  }
+}

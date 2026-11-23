@@ -1,0 +1,240 @@
+{
+  "as_of": "2026-11-06",
+  "quant_choice": "待后续选定",
+  "projects": [
+    {
+      "id": "pring",
+      "name": "普林格周期",
+      "local_path": "/path/to/local-user/项目/肖皓匀/普林格周期（三合一）",
+      "role": "策略研究与说明",
+      "url": "https://howardyun.cn/Macro_Research_Platform/",
+      "baseline_commit": "2dab86a2f2d8367a004f7b695306b7eee4a4ce14",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "industry-rotation",
+      "name": "行业轮动",
+      "local_path": "/path/to/local-user/项目/肖皓匀/行业轮动看板数据重构",
+      "role": "行业研究与轮动策略输入",
+      "url": "https://howardyun.cn/Macro_Research_Platform/industry/",
+      "baseline_commit": "9a5f2a5d11dccc59ec82c335671f9ec7d84dc402",
+      "baseline_branch": "main",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "macro-backtest",
+      "name": "宏观组合回测",
+      "local_path": "/path/to/local-user/项目/肖皓匀/普林格周期回测平台/股债商底层自定义标的",
+      "role": "策略平台",
+      "url": "https://howardyun.cn/Macro_Research_Platform/backtest/",
+      "baseline_commit": "70ab331c7c3233d378d97c1c4f4baf80ef80a018",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "fund-report",
+      "name": "基金深度报告",
+      "local_path": "/path/to/local-user/项目/投资手册+深度报告Agent",
+      "role": "基金研究",
+      "url": "https://howardyun.cn/Mutual_Fund/",
+      "baseline_commit": "0780dce8ac306ca9f16db43884d04b0b6623915c",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "allocation-report",
+      "name": "单基金配置报告",
+      "local_path": null,
+      "role": "基金研究与配置",
+      "url": "https://howardyun.cn/Allocation_Report/",
+      "baseline_commit": null,
+      "baseline_branch": null,
+      "access": "read_only_reference",
+      "archive": "/path/to/local-user/项目/.workspace-archive/2026-11-06/run-182157/cloud-allocation/source"
+    },
+    {
+      "id": "fof",
+      "name": "FOF组合管理",
+      "local_path": "/path/to/local-user/项目/快速回测引擎",
+      "role": "策略平台",
+      "url": "https://howardyun.cn/Fund_Backtest_Desk/",
+      "baseline_commit": "4926507b7f8a32aa34e0580240461bbc170dfa94",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "fund-agent",
+      "name": "基金研究Agent",
+      "local_path": "/path/to/local-user/项目/基金研究Agent实验平台",
+      "role": "基金研究",
+      "url": null,
+      "baseline_commit": "df71bf566f75f4106bdef94d2a8a6eba953e0683",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "cb-research",
+      "name": "可转债看板",
+      "local_path": "/path/to/local-user/项目/可转债投研平台",
+      "role": "研究平台",
+      "url": null,
+      "baseline_commit": "bea8b052d1a486b2e65a80fb523daf172b4ace95",
+      "baseline_branch": "main",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "cb-strategy",
+      "name": "可转债回测",
+      "local_path": "/path/to/local-user/项目/可转债投研平台",
+      "role": "策略平台",
+      "url": null,
+      "baseline_commit": "bea8b052d1a486b2e65a80fb523daf172b4ace95",
+      "baseline_branch": "main",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "vic",
+      "name": "VIC逆向",
+      "local_path": "/path/to/local-user/Documents/ChatGPT/agent 学习/VicAlpha网页分析",
+      "role": "参考与证据",
+      "url": null,
+      "baseline_commit": "7674ff838c847c9d724c02167b4b0cbae0e3ccd9",
+      "baseline_branch": "codex/initial-snapshot",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "quant",
+      "name": "量化研究候选：日线量化研究台",
+      "local_path": "/path/to/local-user/项目/日线量化研究台",
+      "role": "本地量化；最终实现待选定",
+      "url": null,
+      "baseline_commit": "971e7048a407d9dc1c6c4aee568b45cebd3d2a2f",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "lake",
+      "name": "统一数据湖",
+      "local_path": "/path/to/local-user/项目/多资产智能投研平台-v2",
+      "role": "独立数据基础",
+      "url": null,
+      "baseline_commit": "7dd2f168af99f436bbc433bd90e1ff6cb04da957",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "autoloop",
+      "name": "Agent Autoloop",
+      "local_path": "/path/to/local-user/项目/agent-autoloop-main",
+      "role": "独立中台",
+      "url": null,
+      "baseline_commit": "eafb609f0ec0e9e2cb286b42abd62b00f1817976",
+      "baseline_branch": "main",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "zgnb",
+      "name": "一技之长逆向",
+      "local_path": "/path/to/local-user/Documents/ChatGPT/agent 学习/ZGNB网站逆向",
+      "role": "参考与证据",
+      "url": null,
+      "baseline_commit": "72a2ef7298c240275c3e5de2d1cff3ae8a1f9ab5",
+      "baseline_branch": "codex/initial-snapshot",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "quant-fund",
+      "name": "量选基金看板",
+      "local_path": "/path/to/local-user/项目/量选基金平台",
+      "role": "基金研究",
+      "url": null,
+      "baseline_commit": "cdf672f44896699ffd9321499577437578ff667e",
+      "baseline_branch": "codex/workspace-baseline-20261106",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "chain-agent",
+      "name": "产业链研究Agent",
+      "yunalpha_source": "apps/fund_agent/src/industry_agent",
+      "yunalpha_skill": "apps/fund_agent/src/fund_research_agent/deep_skills/industry-research",
+      "local_path": "/path/to/local-user/项目/产业链研究Agent",
+      "role": "行业研究",
+      "url": null,
+      "baseline_commit": "6ceb3ace647257a3343b21e1baac02826d3c88de",
+      "baseline_branch": "main",
+      "access": "read_only_reference",
+      "archive": null
+    },
+    {
+      "id": "aux-资产池数据看板",
+      "name": "资产池数据看板",
+      "local_path": "/path/to/local-user/项目/资产池数据看板",
+      "role": "辅助指标与Excel",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-私募数据看板",
+      "name": "私募数据看板",
+      "local_path": "/path/to/local-user/项目/私募数据看板",
+      "role": "辅助私募数据",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-CNE5",
+      "name": "CNE5",
+      "local_path": "/path/to/local-user/项目/CNE5",
+      "role": "因子参考",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-02ETF及资金流动",
+      "name": "02ETF及资金流动",
+      "local_path": "/path/to/local-user/项目/02ETF及资金流动",
+      "role": "ETF与市场研究",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-01BI平台及JSON数据",
+      "name": "01BI平台及JSON数据",
+      "local_path": "/path/to/local-user/项目/01BI平台及JSON数据",
+      "role": "BI与素材加工",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-self-quant-master",
+      "name": "self-quant-master",
+      "local_path": "/path/to/local-user/项目/self-quant-master",
+      "role": "量化候选",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    },
+    {
+      "id": "aux-SilverM-quant-main",
+      "name": "SilverM-quant-main",
+      "local_path": "/path/to/local-user/项目/SilverM-quant-main",
+      "role": "量化参考",
+      "access": "read_only_reference",
+      "scope": "indexed_only"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "fund": {
+    "report_period": "2026-06-30",
+    "verified_product_count": 3713,
+    "verified_share_count": 7554,
+    "sample_assets_cny": 3846216000000.0,
+    "sample_a_stock_value_cny": 3033660372916.9062,
+    "sample_holding_pct": 0.7887389509369485,
+    "excluded_ratio_count": 10
+  },
+  "company_identity": {
+    "registered_company_id": "org:76351068-2",
+    "registered_company_name": "东方基金管理股份有限公司",
+    "source": "tushare"
+  },
+  "company_subset": {
+    "report_period": "2026-06-30",
+    "verified_product_count": 21,
+    "verified_share_count": 42,
+    "sample_assets_cny": 44710000000.0,
+    "sample_a_stock_value_cny": 41997441863.26001,
+    "sample_holding_pct": 0.9393299454989937,
+    "excluded_ratio_count": 0
+  },
+  "national_coverage_medium": {
+    "report_period": "2026-09-30",
+    "published_stock_count": 5565,
+    "whole_list_stock_count": 5185,
+    "known_alias_stock_count": 296
+  },
+  "national_coverage_narrow": {
+    "report_period": "2026-09-30",
+    "published_stock_count": 5565,
+    "whole_list_stock_count": 5185,
+    "known_alias_stock_count": 34
+  },
+  "national_sample_601988": {
+    "record_date": "2026-09-30",
+    "announce_date": "2026-10-31",
+    "holder_rank": 1,
+    "holder_name": "中央汇金投资有限责任公司",
+    "holding_shares": 188791906533.0,
+    "holding_pct": 64.130345126455,
+    "holding_change": 0.0,
+    "whole_list": true
+  },
+  "national_before_announcement_rows": 10,
+  "contrarian_previous_audit": {
+    "symbol": "000546.SZ",
+    "report_period": "2024-12-31",
+    "announce_date": "2025-04-25",
+    "opinion": "标准无保留意见",
+    "audit_firm": "重庆康华会计师事务所",
+    "signing_auditor": "吴良辉,谢洪奇",
+    "source": "tushare",
+    "data_version": "v1",
+    "audit_conflict": false
+  },
+  "contrarian_next_session_audit": {
+    "symbol": "000546.SZ",
+    "report_period": "2025-12-31",
+    "announce_date": "2026-04-28",
+    "opinion": "保留意见",
+    "audit_firm": "重庆康华会计师事务所",
+    "signing_auditor": "吴良辉,谢洪奇",
+    "source": "tushare",
+    "data_version": "v1",
+    "audit_conflict": false
+  },
+  "historical_event_evidence": {
+    "announcement_date": "2026-04-28",
+    "as_of_date": "2026-04-29",
+    "report_period": "2025Q4",
+    "fscore_report_period": "2025Q4",
+    "fscore_proxy": null,
+    "fscore_components_available": 8,
+    "fscore_missing_components": "lower_long_borrowings_proxy",
+    "lights_available": 4,
+    "strict_pit": false,
+    "pit_status": "reported_announcement_constrained_restated_vintage_unverified"
+  },
+  "health": {
+    "status": "ready",
+    "data_version": "d747f5d7308e9657",
+    "cutoff": "2026-11-09",
+    "valuation_cutoff": "2026-11-13",
+    "boards": [
+      "national_team",
+      "fund_holdings",
+      "capital_flow",
+      "contrarian",
+      "chips",
+      "sentiment",
+      "valuation"
+    ],
+    "collection_enabled": false,
+    "source": "local_snapshot"
+  },
+  "representative_routes": [
+    "health",
+    "fund_holdings/overview",
+    "fund_holdings/entities/东方基金管理股份有限公司",
+    "fund_holdings/ranking",
+    "fund_holdings/compare",
+    "fund_holdings/overview",
+    "national_team/overview",
+    "national_team/overview",
+    "national_team/stock",
+    "national_team/stock",
+    "contrarian/candidates",
+    "contrarian/entities/000546.SZ",
+    "contrarian/entities/000546.SZ",
+    "valuation/overview"
+  ]
+}

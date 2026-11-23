@@ -1,0 +1,329 @@
+{
+  "version": "d3e47185a708e132",
+  "health": {
+    "status": "ready",
+    "data_version": "d3e47185a708e132",
+    "cutoff": "2026-11-09",
+    "valuation_cutoff": "2026-11-13",
+    "boards": [
+      "national_team",
+      "fund_holdings",
+      "capital_flow",
+      "contrarian",
+      "chips",
+      "sentiment",
+      "valuation"
+    ],
+    "collection_enabled": false,
+    "source": "local_snapshot"
+  },
+  "new_directory_version": "d3e47185a708e132",
+  "explicit_history_version": "308617544109caa5",
+  "browser": "Chrome旧版刷新切到日更版、估值结构页可见2026-11-16；ETF可得日与分项说明另验",
+  "timing": {
+    "build_seconds": 6.64,
+    "same_day_status": "unchanged"
+  },
+  "valuation": {
+    "index_pe": {
+      "label": "沪深300 PE",
+      "value": 13.4709,
+      "source_date": "2026-11-13",
+      "source": "valuation/daily:000300.SH",
+      "unit": "倍",
+      "sample_scope": null,
+      "missing_reason": null
+    },
+    "stock_structure": {
+      "trade_date": "2026-11-16",
+      "sample_count": 5572,
+      "positive_pe_count": 3851,
+      "positive_pe_median": 34.6198,
+      "valid_pb_count": 5513,
+      "negative_pb_count": 0,
+      "below_book_ratio": 0.09649918374750589
+    }
+  },
+  "capital_main": {
+    "trade_date": "2026-11-16",
+    "main_net": 5721933200.0,
+    "super_large_net": 1873739200.0,
+    "large_net": 3848190300.0,
+    "medium_net": -993000300.0,
+    "small_net": -5850237400.0,
+    "turnover": null,
+    "sample_count": 5185,
+    "main_net_5d": -69737281600.0,
+    "main_net_20d": null,
+    "main_net_60d": null,
+    "super_large_net_5d": -22966472700.0,
+    "super_large_net_20d": null,
+    "super_large_net_60d": null,
+    "large_net_5d": -46770807700.0,
+    "large_net_20d": null,
+    "large_net_60d": null,
+    "medium_net_5d": -10865644900.0,
+    "medium_net_20d": null,
+    "medium_net_60d": null,
+    "small_net_5d": 76909357700.0,
+    "small_net_20d": null,
+    "small_net_60d": null,
+    "main_net_100d": null,
+    "super_large_net_100d": null,
+    "large_net_100d": null,
+    "medium_net_100d": null,
+    "small_net_100d": null
+  },
+  "capital_20d_last_complete": {
+    "label": "主力 · 20日净额",
+    "value": -399151219400.0,
+    "trade_date": "2026-11-09",
+    "unit": "CNY",
+    "format": "money"
+  },
+  "national_benchmark": {
+    "trade_date": "2026-11-16",
+    "symbol": "000300.SH",
+    "open": 3984.77,
+    "high": 3997.4,
+    "low": 3959.93,
+    "close": 3979.8,
+    "amount": 430554185728.0
+  },
+  "etf_source": {
+    "trade_date": "2026-11-13",
+    "etf_count": 239,
+    "net_subscription": -12582989850.0,
+    "flow_5d": -41669936370.0,
+    "flow_20d": 412226276990.0,
+    "unusual_volume_count": null
+  },
+  "etf_observable_on_11_13": {
+    "trade_date": "2026-11-12",
+    "etf_count": 239,
+    "net_subscription": -22189314270.0,
+    "flow_5d": -23387331540.0,
+    "flow_20d": 447908121880.0,
+    "unusual_volume_count": null
+  },
+  "fund_quote": {
+    "symbol": "600519.SH",
+    "trade_date": "2026-11-16",
+    "open": 1426.3,
+    "high": 1454.93,
+    "low": 1425.0,
+    "close": 1453.9,
+    "amount": 5767305728.0,
+    "volume": 3996700
+  },
+  "chip_quote": {
+    "symbol": "600519.SH",
+    "trade_date": "2026-11-16",
+    "open": 1426.3,
+    "high": 1454.93,
+    "low": 1425.0,
+    "close": 1453.9,
+    "amount": 5767305728.0,
+    "volume": 3996700
+  },
+  "sentiment_display": {
+    "trade_date": "2026-11-16",
+    "source_date": "2026-11-16",
+    "raw_value": -412421090304.0,
+    "indicator_id": "MAIN20",
+    "indicator": "主力净流入20日",
+    "unit": "CNY",
+    "source": "curated/market_money_flow.net_amount",
+    "availability": "完整20交易日；不计温度"
+  },
+  "contrarian_candidate": {
+    "trade_date": "2026-11-16",
+    "symbol": "688298.SH",
+    "name": "东方生物",
+    "industry_name": "医药生物",
+    "score_group": "医疗器械",
+    "metric": "pb",
+    "metric_value": 0.6237,
+    "valuation_score": 100.0,
+    "group_count": 109,
+    "close": 17.57,
+    "amount": 63687480.0,
+    "rank": 1
+  },
+  "contrarian_benchmark": {
+    "trade_date": "2026-11-09",
+    "close": 5119.5573
+  },
+  "validation_sections": {
+    "capital_flow/main": 6,
+    "chips/stock": 8,
+    "contrarian/candidates": 4,
+    "contrarian/temperature": 7,
+    "fund_holdings/stock": 8,
+    "national_team/etf": 12,
+    "sentiment/indicators": 6,
+    "valuation/overview": 5,
+    "valuation/structure": 6
+  },
+  "boards": {
+    "capital_flow": {
+      "etf": {
+        "data_date": "2026-11-13",
+        "first_date": "2026-11-10",
+        "reason": "只更新到来源最近已公布交易日",
+        "rows": 6876,
+        "status": "lagged"
+      },
+      "main_money": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 5,
+        "status": "current"
+      },
+      "margin_cross_dragon_balance": {
+        "data_date": "2026-11-09",
+        "reason": "完整分项口径未重算，源日各自保留",
+        "status": "retained"
+      },
+      "stock_main_windows": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 28858,
+        "status": "current"
+      }
+    },
+    "chips": {
+      "cost_and_signals": {
+        "data_date": "2026-11-09",
+        "reason": "正式筹码成本无新的同口径版本",
+        "status": "retained"
+      },
+      "stock_quotes": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 20896,
+        "status": "current"
+      }
+    },
+    "contrarian": {
+      "benchmark_index": {
+        "data_date": "2026-11-09",
+        "reason": "该指数无更新日线，其他指数日期不可替代",
+        "status": "retained"
+      },
+      "factors_temperature_financials": {
+        "data_date": "2026-11-09",
+        "reason": "综合分、复权反转、PCF/EV、温度及历史财务不借用新行情日期",
+        "status": "retained"
+      },
+      "valuation_screens": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 50652,
+        "status": "current"
+      }
+    },
+    "crowding": {
+      "core": {
+        "data_date": "2026-11-13",
+        "reason": "抱团完整日更由独立核心构建负责，当前入口保留已选版",
+        "status": "retained"
+      },
+      "interval_returns_and_risk": {
+        "data_date": "2026-11-13",
+        "reason": "原收益起点、风险与持仓估值仍使用相同冻结行情",
+        "status": "retained"
+      },
+      "portfolio": {
+        "data_date": "2026-06-30",
+        "reason": "全持仓和抱团风险沿用已验证版本",
+        "status": "retained"
+      },
+      "top10_and_fund_scale": {
+        "data_date": "2026-09-30",
+        "reason": "按报告期更新，独立于行情",
+        "status": "retained"
+      }
+    },
+    "fund_holdings": {
+      "company_nav": {
+        "data_date": "2026-11-09",
+        "reason": "公司级NAV权重与可得日未重算",
+        "status": "retained"
+      },
+      "holdings": {
+        "data_date": "2026-06-30",
+        "reason": "半年报/年报全持仓，季度前十大不替代",
+        "status": "retained"
+      },
+      "stock_quotes": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 20896,
+        "status": "current"
+      }
+    },
+    "national_team": {
+      "etf": {
+        "data_date": "2026-11-13",
+        "first_date": "2026-11-10",
+        "reason": "只更新到来源最近已公布交易日",
+        "rows": 6876,
+        "status": "lagged"
+      },
+      "holdings": {
+        "data_date": "2026-09-30",
+        "reason": "报告期持仓与账户身份沿用核验快照",
+        "status": "retained"
+      },
+      "index_prices": {
+        "data_date": "2026-11-16",
+        "reason": null,
+        "status": "current"
+      },
+      "portfolio_temperature": {
+        "data_date": "2026-11-09",
+        "reason": "影子组合与托底信号未重算",
+        "status": "retained"
+      }
+    },
+    "sentiment": {
+      "market_main20": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 5,
+        "status": "current"
+      },
+      "temperature": {
+        "data_date": "2026-11-09",
+        "reason": "六维指标未完整重算；辅助主力净流入不计入温度",
+        "status": "retained"
+      }
+    },
+    "valuation": {
+      "dividends_and_historical_statistics": {
+        "data_date": "2026-11-09",
+        "reason": "仍用已发布历史口径",
+        "status": "retained"
+      },
+      "official_index_pe_pb": {
+        "data_date": "2026-11-13",
+        "reason": "正式指数尚无连续完整新截面；不使用代理",
+        "status": "lagged"
+      },
+      "stock_structure": {
+        "data_date": "2026-11-16",
+        "first_date": "2026-11-10",
+        "reason": null,
+        "rows": 5,
+        "status": "current"
+      }
+    }
+  }
+}

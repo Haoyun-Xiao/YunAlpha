@@ -1,0 +1,17 @@
+[Unit]
+Description=YunAlpha showcase backtest (%i)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/data/www/YunAlpha/current/apps/%i
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=OMP_NUM_THREADS=1
+EnvironmentFile=/data/www/YunAlpha/%i.env
+ExecStart=/data/www/YunAlpha/venv/bin/python -m backtest_platform.server ${PORT}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

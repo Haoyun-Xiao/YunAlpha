@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>基金组合管理平台</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css?v=20260701-category-timeline" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="top-title">
+        <div>
+          <p class="eyebrow">Fund Portfolio Desk</p>
+          <h1>基金组合管理平台</h1>
+        </div>
+        <nav id="resultTabs" class="result-tabs" aria-label="组合视图版面">
+          <button class="result-tab active" type="button" data-result-view="backtest">组合概览</button>
+          <button class="result-tab" type="button" data-result-view="attribution">组合分析</button>
+        </nav>
+      </div>
+      <div class="top-benchmark">
+        <span>对照基准</span>
+        <button id="benchmarkPickerBtn" class="benchmark-picker-btn" type="button">
+          <strong id="benchmarkPickerName">沪深300</strong>
+          <small id="benchmarkPickerMeta">000300.SH</small>
+          <em>更换</em>
+        </button>
+      </div>
+      <div class="top-actions">
+        <div class="frequency-toggle" role="group" aria-label="回测数据频率">
+          <button class="frequency-btn active" type="button" data-frequency="daily">日频</button>
+          <button class="frequency-btn" type="button" data-frequency="weekly">周频</button>
+          <button class="frequency-btn" type="button" data-frequency="monthly">月频</button>
+        </div>
+        <button id="newPortfolioBtn" class="ghost-btn" type="button">新建组合</button>
+        <button id="adjustPortfolioBtn" class="ghost-btn" type="button">调整持仓</button>
+        <button id="runBtn" class="primary-btn" type="button">回测</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <aside class="library-panel">
+        <div class="panel-head">
+          <div>
+            <div class="library-title-row">
+              <h2>组合库</h2>
+              <button id="portfolioBulkToggleBtn" class="library-action-btn" type="button">操作</button>
+            </div>
+            <p id="portfolioCount">正在加载组合...</p>
+          </div>
+          <button id="toggleLibraryBtn" class="library-toggle-btn" type="button" aria-label="折叠组合库" title="折叠组合库">‹</button>
+        </div>
+        <input id="portfolioSearchInput" class="search" type="search" placeholder="搜索组合名称" />
+        <div id="portfolioList" class="portfolio-list"></div>
+      </aside>
+
+      <section class="workspace">
+        <section id="portfolioHomeView" class="portfolio-panel hidden">
+          <div class="form-row compact hidden">
+            <select id="weightMode">
+              <option value="manual">三组手动</option>
+              <option value="equal">三组等权</option>
+              <option value="template_defensive">防守</option>
+              <option value="template_stable">均衡</option>
+              <option value="template_aggressive">进取</option>
+            </select>
+            <label class="benchmark-field hidden">
+              基准
+              <select id="benchmarkSelect"></select>
+            </label>
+            <input id="startDate" type="date" />
+            <input id="endDate" type="date" />
+          </div>
+          <div id="portfolioDirtyNotice" class="warning-box hidden">持仓已修改，尚未回测。</div>
+          <div id="sleeveGrid" class="sleeve-grid hidden"></div>
+          <div id="weightSummary" class="weight-summary hidden"></div>
+        </section>
+
+        <section id="status" class="status">等待选择基金。</section>
+
+        <section id="results" class="results hidden">
+          <div class="result-head">
+            <div>
+              <h2>组合概览</h2>
+              <p id="windowText"></p>
+            </div>
+          </div>
+
+          <div id="warningBox" class="warning-box hidden"></div>
+
+          <section id="portfolioOverview" class="portfolio-overview"></section>
+
+          <section class="home-performance-layout">
+            <article id="performanceChart" class="performance-card home-performance-card">
+              <div class="performance-window-toolbar">
+                <div id="performanceRangePresets" class="performance-presets" aria-label="快捷显示区间">
+                  <button type="button" data-range-preset="ytd">今年以来</button>
+                  <button type="button" data-range-preset="3m">近3月</button>
+                  <button type="button" data-range-preset="6m">近6月</button>
+                  <button type="button" data-range-preset="1y">近1年</button>
+                  <button type="button" data-range-preset="3y">近3年</button>
+                  <button type="button" data-range-preset="all" class="active">成立以来</button>
+                  <span class="performance-date-controls" aria-label="曲线显示日期">
+                    <input id="performanceRangeStartDate" type="date" aria-label="曲线起点日期" />
+                    <span>至</span>
+                    <input id="performanceRangeEndDate" type="date" aria-label="曲线终点日期" />
+                  </span>
+                </div>
+              </div>
+              <div class="performance-chart-block">
+                <div class="chart-title">
+                  <div class="chart-title-main">
+                    <h3>累计收益</h3>
+                    <select id="performanceModeSelect" class="scope-select" aria-label="选择曲线口径">
+                      <option value="return">收益率曲线</option>
+                      <option value="asset">资产曲线</option>
+                    </select>
+                  </div>
+                  <div id="returnChartLegend" class="chart-inline-legend" aria-label="累计收益图例"></div>
+                </div>
+                <canvas id="returnChart" height="300"></canvas>
+              </div>
+              <div class="performance-chart-block compact">
+                <div class="chart-title">
+                  <h3>回撤走势</h3>
+                  <div id="drawdownChartLegend" class="chart-inline-legend" aria-label="回撤走势图例"></div>
+                </div>
+                <canvas id="drawdownChart" height="120"></canvas>
+              </div>
+              <div class="performance-range">
+                <div class="performance-range-labels">
+                  <span id="performanceRangeStartLabel">-</span>
+                  <span id="performanceRangeEndLabel">-</span>
+                </div>
+                <div class="range-dual">
+                  <div id="performanceRangeTrack" class="range-track"></div>
+                  <input id="performanceRangeStart" type="range" min="0" max="0" value="0" />
+                  <input id="performanceRangeEnd" type="range" min="0" max="0" value="0" />
+                </div>
+              </div>
+            </article>
+            <aside id="metrics" class="metrics metric-table-panel"></aside>
+          </section>
+
+          <div class="chart-grid result-return-grid">
+            <div class="chart-stack">
+              <article class="chart-card">
+                <div class="chart-title">
+                  <h3>年度收益</h3>
+                  <select id="annualReturnScope" class="scope-select"></select>
+                </div>
+                <canvas id="annualReturnChart" height="210"></canvas>
+              </article>
+              <article class="chart-card">
+                <div class="chart-title">
+                  <h3>年度收益拆解</h3>
+                </div>
+                <canvas id="annualContributionChart" height="210"></canvas>
+              </article>
+            </div>
+            <div class="chart-stack">
+              <article class="chart-card">
+                <div class="chart-title">
+                  <h3>区间收益</h3>
+                  <select id="periodReturnScope" class="scope-select"></select>
+                </div>
+                <canvas id="periodReturnChart" height="210"></canvas>
+              </article>
+              <article class="chart-card">
+                <div class="chart-title">
+                  <h3>区间收益拆解</h3>
+                </div>
+                <canvas id="periodContributionChart" height="210"></canvas>
+              </article>
+            </div>
+          </div>
+
+          <div class="table-grid">
+            <article class="table-card wide">
+              <div class="table-title">
+                <h3>年度收益拆解</h3>
+                <select id="annualContributionTableScope" class="scope-select"></select>
+              </div>
+              <div id="annualContributionTable" class="table-wrap"></div>
+            </article>
+          </div>
+
+          <article class="table-card latest-holding-card">
+            <div class="table-title">
+              <h3>最新持仓权重表</h3>
+            </div>
+            <div id="latestHoldingTable" class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>基金名称</th>
+                    <th>持仓权重</th>
+                    <th>权重漂移</th>
+                    <th>最新日期</th>
+                    <th>最新涨幅</th>
+                    <th>今年以来</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="table-card transaction-card">
+            <div class="table-title">
+              <h3>交易流水</h3>
+            </div>
+            <div id="transactionTable" class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>基金</th>
+                    <th>类型</th>
+                    <th>权重变化</th>
+                    <th>净值</th>
+                    <th>份额</th>
+                    <th>成交金额</th>
+                    <th>费用</th>
+                    <th>现金变动</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section id="attributionView" class="attribution-view hidden">
+          <div class="result-head">
+            <div>
+              <h2>组合分析</h2>
+              <p id="attributionWindowText">请先运行回测。</p>
+            </div>
+            <div class="analysis-window-control" aria-label="归因和相关性区间">
+              <div class="analysis-window-labels">
+                <span id="analysisWindowStartLabel">-</span>
+                <div id="analysisWindowPresets" class="analysis-window-presets">
+                  <button type="button" data-analysis-preset="1m">近1月</button>
+                  <button type="button" data-analysis-preset="3m">近3月</button>
+                  <button type="button" data-analysis-preset="6m">近6月</button>
+                  <button type="button" data-analysis-preset="1y">近1年</button>
+                  <button type="button" data-analysis-preset="3y">近3年</button>
+                  <button type="button" data-analysis-preset="all" class="active">成立以来</button>
+                </div>
+                <span id="analysisWindowEndLabel">-</span>
+              </div>
+              <div class="analysis-range-row">
+                <span id="analysisWindowStatus" class="analysis-window-status"></span>
+                <div class="analysis-range-dual">
+                  <div id="analysisRangeTrack" class="analysis-range-track"></div>
+                  <input id="analysisRangeStart" type="range" min="0" max="0" value="0" />
+                  <input id="analysisRangeEnd" type="range" min="0" max="0" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <article class="attribution-panel">
+            <div class="table-title">
+              <div>
+                <h3>区间归因</h3>
+                <p id="attributionRangeText"></p>
+              </div>
+            </div>
+            <div id="attributionRows" class="attribution-table-wrap"></div>
+            <p class="attribution-note">注：收益贡献、波动贡献、回撤贡献按当前口径计算；自身表现按对象净值曲线计算。</p>
+          </article>
+
+          <div class="attribution-correlation-layout">
+            <article class="attribution-panel sleeve-correlation-panel">
+              <h3>子集合间超额相关性</h3>
+              <div id="sleeveCorrelationMatrix"></div>
+            </article>
+            <article class="attribution-panel category-timeline-panel">
+              <h3>大类配置时序</h3>
+              <div id="categoryTimelineLegend" class="category-timeline-legend"></div>
+              <canvas id="categoryTimelineChart" height="260"></canvas>
+            </article>
+            <article class="attribution-panel sleeve-fund-correlation-panel">
+              <h3>子集合内部基金相关性</h3>
+              <div id="sleeveFundCorrelationList" class="sleeve-fund-correlation-list"></div>
+            </article>
+          </div>
+
+          <article class="attribution-panel attribution-fund-correlation-panel">
+            <h3>全部基金相关性热力图</h3>
+            <div id="fundCorrelationSummary"></div>
+          </article>
+
+          <aside id="fundAttributionDrawer" class="fund-drawer hidden">
+            <div class="fund-drawer-head">
+              <div>
+                <strong id="fundDrawerTitle">基金详情</strong>
+                <span id="fundDrawerCode"></span>
+              </div>
+              <button id="closeFundDrawerBtn" type="button" aria-label="关闭">×</button>
+            </div>
+            <div id="fundDrawerBody" class="fund-drawer-body"></div>
+          </aside>
+
+          <section id="exposureView" class="exposure-view exposure-embedded">
+          <div class="result-head exposure-head">
+            <div>
+              <h2>暴露分析</h2>
+              <p id="exposureWindowText">请先运行回测。</p>
+            </div>
+            <div class="exposure-controls" aria-label="暴露分析筛选">
+              <span id="exposureDatePill" class="data-pill">画像日期 -</span>
+              <span class="data-pill active">A股口径</span>
+              <span class="data-pill">估算画像</span>
+              <span class="data-pill warn">港股未纳入</span>
+            </div>
+          </div>
+
+          <div id="exposureBreakdownSections" class="exposure-breakdown-sections" aria-label="大类 / 一级行业 / 二级行业 / 个股"></div>
+
+          <article class="attribution-panel exposure-panel">
+            <div class="table-title">
+              <h3>风格暴露</h3>
+            </div>
+            <div class="exposure-factor-grid">
+              <section>
+                <h4>总组合 Barra/CNE5 风格暴露</h4>
+                <div id="exposureFactorBars" class="factor-bar-list"></div>
+              </section>
+              <section>
+                <h4>风格穿透矩阵</h4>
+                <div id="exposureFactorRows" class="exposure-table-wrap"></div>
+              </section>
+            </div>
+          </article>
+
+          <div id="exposureHistoryTables" class="exposure-history-grid"></div>
+
+          <aside id="fundExposureDrawer" class="fund-drawer hidden">
+            <div class="fund-drawer-head">
+              <div>
+                <strong id="exposureDrawerTitle">基金详情</strong>
+                <span id="exposureDrawerCode"></span>
+              </div>
+              <button id="closeExposureDrawerBtn" type="button" aria-label="关闭">×</button>
+            </div>
+            <div id="exposureDrawerBody" class="fund-drawer-body"></div>
+          </aside>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <div id="benchmarkModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="benchmarkModalTitle">
+      <div class="modal-card benchmark-modal-card">
+        <div class="modal-head">
+          <div>
+            <h2 id="benchmarkModalTitle">选择对照基准</h2>
+            <p>资产库中的指数和基金都可以作为回测对照。</p>
+          </div>
+          <button id="closeBenchmarkModalBtn" class="icon-btn" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="benchmark-tools">
+          <input id="benchmarkSearchInput" class="search" type="search" placeholder="搜索名称、代码、经理或标签" />
+          <select id="benchmarkTypeFilter">
+            <option value="index">指数</option>
+            <option value="fund">基金</option>
+            <option value="all">全部类型</option>
+          </select>
+        </div>
+        <div id="benchmarkList" class="benchmark-list"></div>
+      </div>
+    </div>
+
+    <div id="portfolioDeleteConfirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="portfolioDeleteConfirmTitle">
+      <div class="modal-card portfolio-delete-confirm-card">
+        <div class="modal-head">
+          <div>
+            <h2 id="portfolioDeleteConfirmTitle">删除组合</h2>
+            <p id="portfolioDeleteConfirmText">删除后无法从组合库恢复。</p>
+          </div>
+          <button id="closePortfolioDeleteConfirmBtn" class="icon-btn" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-actions">
+          <button id="cancelPortfolioDeleteBtn" class="ghost-btn" type="button">取消</button>
+          <button id="confirmPortfolioDeleteBtn" class="primary-btn danger" type="button">删除</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="adjustPortfolioModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="adjustPortfolioTitle">
+      <div class="modal-card adjust-modal-card">
+        <div class="modal-head adjust-modal-head">
+          <div class="adjust-modal-title">
+            <h2 id="adjustPortfolioTitle">调整持仓</h2>
+            <p id="adjustPortfolioMeta">按调仓日维护完整目标持仓。</p>
+          </div>
+          <button id="closeAdjustModalBtn" class="icon-btn" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="adjust-toolbar">
+          <label class="compact-label">
+            组合名称
+            <input id="portfolioNameInput" type="text" maxlength="80" />
+          </label>
+          <label class="compact-label">
+            开始日期
+            <input id="modalStartDate" type="date" />
+          </label>
+          <label class="compact-label">
+            结束日期
+            <input id="modalEndDate" type="date" />
+          </label>
+          <label class="compact-label cash-input-label">
+            初始资金
+            <input id="initialCashInput" type="number" min="0" step="1000" />
+          </label>
+          <button id="feeSettingsBtn" class="ghost-btn" type="button">费率设置</button>
+          <label class="compact-label">
+            调仓频率
+            <select id="rebalanceFrequencySelect">
+              <option value="none">无</option>
+              <option value="monthly">月度</option>
+              <option value="quarterly" selected>季度</option>
+              <option value="semiannual">半年度</option>
+            </select>
+          </label>
+          <div class="rebalance-rule-inline" aria-label="调仓规则">
+            <label class="rule-option">
+              <input type="radio" name="rebalanceApplyMode" value="forward" checked />
+              <span>应用到后续调仓日</span>
+            </label>
+            <label class="rule-option">
+              <input type="radio" name="rebalanceApplyMode" value="single" />
+              <span>仅修改当前调仓日</span>
+            </label>
+          </div>
+          <button id="importExcelBtn" class="ghost-btn import-excel-btn" type="button">导入Excel</button>
+          <input id="excelFileInput" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
+        </div>
+        <div class="adjust-layout">
+          <aside class="rebalance-timeline-panel">
+            <div class="panel-mini-head">
+              <strong>调仓时间线</strong>
+              <button id="addRebalanceDateBtn" class="mini-btn" type="button">新增交易</button>
+              <input id="addRebalanceDateInput" class="date-picker-proxy" type="date" aria-label="选择新增调仓日期" />
+            </div>
+            <div id="rebalanceTimeline" class="rebalance-timeline"></div>
+          </aside>
+          <aside class="modal-fund-pool">
+            <div class="panel-mini-head">
+              <strong>基金池</strong>
+              <span id="assetCount">0 只基金</span>
+            </div>
+            <input id="searchInput" class="search modal-search" type="search" placeholder="搜索基金名称或基金经理" />
+            <div id="modalAssetList" class="asset-list"></div>
+            <div id="assetList" class="hidden"></div>
+          </aside>
+          <section class="modal-holdings-panel">
+            <div class="panel-mini-head">
+              <strong id="activeRebalanceDateTitle">当前调仓日</strong>
+              <div class="current-day-tools">
+                <button id="equalInsideBtn" class="ghost-btn" type="button">组内等权</button>
+                <select id="currentTemplateSelect" aria-label="当前调仓日模板">
+                  <option value="equal">三组等权</option>
+                  <option value="defensive">防御</option>
+                  <option value="stable">均衡</option>
+                  <option value="aggressive">进取</option>
+                </select>
+              </div>
+            </div>
+            <div class="cash-flow-strip compact">
+              <label>
+                <span>申购/赎回金额</span>
+                <input id="activeCashFlowInput" type="number" step="1000" value="0" />
+              </label>
+              <div id="cashEstimatePanel" class="cash-estimate-panel">
+                <span>调仓后资产 <strong>-</strong></span>
+              </div>
+              <div id="rebalanceValidation" class="rebalance-validation current-day-validation"></div>
+            </div>
+            <div id="modalHoldingTable" class="modal-holding-table compact"></div>
+          </section>
+        </div>
+        <div class="modal-actions">
+          <button id="cancelAdjustModalBtn" class="ghost-btn" type="button">取消</button>
+          <button id="generateGlobalPlanBtn" class="primary-btn" type="button">生成调仓</button>
+          <button id="confirmAdjustModalBtn" class="primary-btn" type="button">保存到组合</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="feeSettingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="feeSettingsTitle">
+      <div class="modal-card fee-settings-card">
+        <div class="modal-head">
+          <div>
+            <h2 id="feeSettingsTitle">费率设置</h2>
+            <p>设置资金模式下的交易相关费率。</p>
+          </div>
+          <button id="closeFeeSettingsModalBtn" class="icon-btn" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="fee-settings-grid">
+          <label>
+            申购费率%
+            <input id="purchaseFeeInput" type="number" min="0" step="0.01" />
+          </label>
+          <label>
+            赎回费率%
+            <input id="redemptionFeeInput" type="number" min="0" step="0.01" />
+          </label>
+          <label>
+            交易费率%
+            <input id="transactionFeeInput" type="number" min="0" step="0.01" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button id="cancelFeeSettingsModalBtn" class="ghost-btn" type="button">取消</button>
+          <button id="confirmFeeSettingsModalBtn" class="primary-btn" type="button">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js?v=20260701-category-timeline"></script>
+  </body>
+</html>
